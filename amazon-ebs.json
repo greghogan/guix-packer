@@ -1,0 +1,120 @@
+{
+  "variables": {
+    "aws_access_key_id": "",
+    "aws_secret_access_key": ""
+  },
+  "sensitive-variables": ["aws_access_key_id", "aws_secret_access_key"],
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ami_name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}",
+      "instance_type": "c5d.xlarge",
+      "region": "us-east-1",
+      "spot_price": "auto",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "{{user `ami_name`}}",
+          "root-device-type": "ebs"
+        },
+        "owners": "{{user `ami_owners`}}",
+        "most_recent": true
+      },
+      "ssh_username": "{{user `ssh_username`}}",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "tags": {
+        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+      },
+      "run_tags": {
+        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+      },
+      "snapshot_tags": {
+        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+      },
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/xvda",
+          "volume_size": 10,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "encrypt_boot": true,
+      "force_deregister": true,
+      "force_delete_snapshot": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 15"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "script": "scripts/setup_system.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "script": "{{user `custom_image_name`}}/pre_reboot.sh"
+    },
+    {
+      "type": "shell",
+      "expect_disconnect": true,
+      "inline": [
+        "sudo reboot"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "script": "{{user `custom_image_name`}}/post_reboot.sh"
+    },
+    {
+      "type": "shell",
+      "expect_disconnect": true,
+      "inline": [
+        "sudo reboot"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "10s",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "script": "scripts/setup_guix.sh"
+    },
+    {
+      "type": "shell",
+      "expect_disconnect": true,
+      "inline": [
+        "sudo reboot"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "intel/silent.cfg",
+      "destination": "/tmp/silent.cfg"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/setup_development.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "script": "scripts/setup_root.sh"
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+        "AWS_ACCESS_KEY_ID={{user `aws_access_key_id`}}",
+        "AWS_SECRET_ACCESS_KEY={{user `aws_secret_access_key`}}"
+      ],
+      "script": "scripts/setup_user.sh"
+    }
+  ]
+}
