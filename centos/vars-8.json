@@ -1,0 +1,6 @@
+{
+  "custom_image_name": "centos",
+  "ami_name": "CentOS 8.2.2004 x86_64",
+  "ami_owners": "125523088429",
+  "ssh_username": "ec2-user"
+}
