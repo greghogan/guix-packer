@@ -54,3 +54,6 @@ ln -s ${CURRENT_GUIX}/share/info/* /usr/local/share/info
 
 # Use substitutes from ci.guix.gnu.org
 ${CURRENT_GUIX}/bin/guix archive --authorize < ${CURRENT_GUIX}/share/guix/ci.guix.gnu.org.pub
+
+# Generate a new key pair for the daemon, a prerequisite before archives can be exported
+${CURRENT_GUIX}/bin/guix archive --generate-key
