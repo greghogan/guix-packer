@@ -3,6 +3,8 @@
 # exit immediately on failure (even when piping) and disable filename expansion (globbing)
 set -efo pipefail
 
+GUIX_COMMIT=755da56f
+
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
 AWS_EFA_INSTALLER_VERSION=1.9.5
 
@@ -25,8 +27,8 @@ function WGET() { wget --progress=dot:mega "$@"; }
 # builds are just as fast on EBS but perhaps the snapshot is better with fewer fragments
 mkdir -p "/volumes/nvme1n1/tmp" >/dev/null 2>&1 && cd "$_" || echo "No ephemeral disk mounted, building in home directory"
 
-# Force creation of a profile by updating to the current Guix version
-/var/guix/profiles/per-user/root/current-guix/bin/guix pull
+# Force creation of a profile by updating to the current Guix version, to the (optional) commit
+/var/guix/profiles/per-user/root/current-guix/bin/guix pull ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}}
 
 # Import environment variables from Guix package installations
 readonly SET_GUIX_PROFILE="export GUIX_PROFILE=${GUIX_PROFILE}"
