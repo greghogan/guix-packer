@@ -9,6 +9,9 @@ ssh-keygen -N "" -t rsa -f ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
+# allow root passwordless login for offload builds
+sudo cat /root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
 cat <<EOF > ~/.ssh/config
 Host *
     LogLevel ERROR
