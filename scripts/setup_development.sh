@@ -21,7 +21,7 @@ ARCH=$(uname -m)
 
 GUIX_PROFILE='/var/guix/profiles/per-user/${USER}/guix-profile'
 
-function WGET() { wget --progress=dot:mega "$@"; }
+function WGET() { until wget --tries=1 --timeout=10 --progress=dot:mega "$1" -O "$2"; do rm -f "$2"; done }
 
 # Ephemeral disks are setup in setup_system.sh to mount on boot;
 # builds are just as fast on EBS but perhaps the snapshot is better with fewer fragments
@@ -88,21 +88,21 @@ EOF
 
 # Install AWS EFA (Elastic Fabric Adaptor)
 # this also installs Amazon's OpenMPI build among other installed packages
-WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz
-tar xf aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz && rm -f aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz
+WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
+tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
 cd aws-efa-installer || exit
 sudo ./efa_installer.sh -y || exit
 cd .. || exit
 rm -rf aws-efa-installer
 
 # GitHub CLI
-WGET https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_amd64.rpm
-sudo rpm -Uvh gh_${GITHUB_CLI_VERSION}_linux_amd64.rpm || exit
-rm -f gh_${GITHUB_CLI_VERSION}_linux_amd64.rpm
+WGET https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_amd64.rpm gh_linux_amd64.rpm
+sudo rpm -Uvh gh_linux_amd64.rpm || exit
+rm -f gh_linux_amd64.rpm
 
 # Intel Compiler
 if [ "${ARCH}" == "x86_64" ]; then
-  WGET ${INTEL_PARALLEL_STUDIO_XE_URL} -O parallel_studio_xe.tbz
+  WGET ${INTEL_PARALLEL_STUDIO_XE_URL} parallel_studio_xe.tbz
   tar xf parallel_studio_xe.tbz --transform "s|[^/]*|parallel_studio_xe|rSH" && rm -f parallel_studio_xe.tbz
   cd parallel_studio_xe || exit
   sudo ./install.sh --silent /tmp/silent.cfg || exit
