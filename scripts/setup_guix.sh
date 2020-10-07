@@ -58,3 +58,19 @@ ${CURRENT_GUIX}/bin/guix archive --authorize < ${CURRENT_GUIX}/share/guix/ci.gui
 # Generate and self-authenticate a new key pair for the daemon, a prerequisite before archives can be exported
 ${CURRENT_GUIX}/bin/guix archive --generate-key
 ${CURRENT_GUIX}/bin/guix archive --authorize < /etc/guix/signing-key.pub
+
+# Create template for enabling Guix offload builds; to use, the host name and
+# user name must be added and the file renamed by removing the ".template" extension
+cat <<EOF > /etc/guix/machines.scm.template
+(list (build-machine
+        (name "<host name>")
+        (systems (list "${ARCH}-linux"))
+        (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub)")
+        (user "<user>")))
+EOF
+
+# The following packages must be installed on the build host: guix guile guile-ssh
+
+# Prevent warning from Guix when offloading or copying between hosts:
+# ssh_known_hosts_read_entries: Failed to open the known_hosts file '/etc/ssh/ssh_known_hosts': No such file or directory
+touch /etc/ssh/ssh_known_hosts
