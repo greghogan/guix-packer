@@ -12,11 +12,17 @@ chmod 600 ~/.ssh/authorized_keys
 # allow root passwordless login for offload builds
 sudo cat /root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
+# enable the sharing of multiple sessions over a single network connection
+# with ControlMaster and ControlPath
+mkdir .ssh/sockets
+
 cat <<EOF > ~/.ssh/config
 Host *
     LogLevel ERROR
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
 EOF
 chmod 600 ~/.ssh/config
 
