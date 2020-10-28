@@ -24,7 +24,8 @@ yum install -y \
   libhugetlbfs-devel \
   libhugetlbfs-utils \
   patch \
-  perf
+  perf \
+  xorg-x11-xauth
 
 # needed by Intel C/C++ compiler, which does not properly locate dependent
 # GCC directories when guix is loaded in the user environment; guix is
