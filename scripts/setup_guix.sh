@@ -66,7 +66,8 @@ cat <<EOF > /etc/guix/machines.scm.template
         (name "<host name>")
         (systems (list "${ARCH}-linux"))
         (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub)")
-        (user "<user>")))
+        (user "<user>")
+        (compression "none")))
 EOF
 
 # The following packages must be installed on the build host: guix guile guile-ssh
