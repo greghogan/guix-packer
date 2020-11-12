@@ -8,9 +8,6 @@ GUIX_COMMIT=755da56f
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
 AWS_EFA_INSTALLER_VERSION=1.9.5
 
-# https://github.com/cli/cli/releases
-GITHUB_CLI_VERSION=1.0.0
-
 # https://software.seek.intel.com/ps-l
 #   Intel Compiler serial number must be kept up-to-date in intel/silent.cfg
 # https://software.intel.com/en-us/articles/intel-cpp-compiler-release-notes
@@ -94,11 +91,6 @@ cd aws-efa-installer || exit
 sudo ./efa_installer.sh -y || exit
 cd .. || exit
 rm -rf aws-efa-installer
-
-# GitHub CLI
-WGET https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_amd64.rpm gh_linux_amd64.rpm
-sudo rpm -Uvh gh_linux_amd64.rpm || exit
-rm -f gh_linux_amd64.rpm
 
 # Intel Compiler
 if [ "${ARCH}" == "x86_64" ]; then
