@@ -7,8 +7,8 @@
   "builders": [
     {
       "type": "amazon-ebs",
-      "ami_name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}",
-      "instance_type": "c5d.xlarge",
+      "ami_name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}",
+      "instance_type": "{{user `instance_type`}}.xlarge",
       "region": "us-east-1",
       "spot_price": "auto",
       "source_ami_filter": {
@@ -24,13 +24,13 @@
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
       "tags": {
-        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+        "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
       },
       "run_tags": {
-        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+        "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
       },
       "snapshot_tags": {
-        "Name": "guix/{{user `custom_image_name`}}/{{isotime \"20060102\"}}"
+        "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
       },
       "launch_block_device_mappings": [
         {
@@ -60,7 +60,7 @@
     {
       "type": "shell",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "script": "{{user `custom_image_name`}}/pre_reboot.sh"
+      "script": "{{user `image_name`}}/pre_reboot.sh"
     },
     {
       "type": "shell",
@@ -72,7 +72,7 @@
     {
       "type": "shell",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "script": "{{user `custom_image_name`}}/post_reboot.sh"
+      "script": "{{user `image_name`}}/post_reboot.sh"
     },
     {
       "type": "shell",

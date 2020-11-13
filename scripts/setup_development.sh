@@ -52,14 +52,18 @@ readonly SOURCE_GUIX_PROFILE="source \${GUIX_PROFILE}/etc/profile"
 eval "${SOURCE_GUIX_PROFILE}" && echo "${SOURCE_GUIX_PROFILE}" >>~/.bashrc
 
 # System utility packages
+if [ "${ARCH}" = "x86_64" ]; then
+guix install \
+  cpuid \
+  fio
+fi
+
 guix install \
   binutils \
   coreutils \
-  cpuid \
   curl \
   diffutils \
   dos2unix \
-  fio \
   htop \
   iftop \
   iotop \
@@ -85,15 +89,19 @@ EOF
 
 # Install AWS EFA (Elastic Fabric Adaptor)
 # this also installs Amazon's OpenMPI build among other installed packages
-WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
-tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
-cd aws-efa-installer || exit
-sudo ./efa_installer.sh -y || exit
-cd .. || exit
-rm -rf aws-efa-installer
+# note: no current support for aarch64 instances:
+#   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
+if [ "${ARCH}" = "x86_64" ]; then
+  WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
+  tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
+  cd aws-efa-installer || exit
+  sudo ./efa_installer.sh -y || exit
+  cd .. || exit
+  rm -rf aws-efa-installer
+fi
 
 # Intel Compiler
-if [ "${ARCH}" == "x86_64" ]; then
+if [ "${ARCH}" = "x86_64" ]; then
   WGET ${INTEL_PARALLEL_STUDIO_XE_URL} parallel_studio_xe.tbz
   tar xf parallel_studio_xe.tbz --transform "s|[^/]*|parallel_studio_xe|rSH" && rm -f parallel_studio_xe.tbz
   cd parallel_studio_xe || exit

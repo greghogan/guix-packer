@@ -4,6 +4,8 @@
 # error, and disable filename expansion (globbing)
 set -euf
 
+ARCH=$(uname -m)
+
 # kernel-ng is installed in the pre-reboot script and loaded on the reboot,
 # so remove old kernel (and headers) from the base Amazon Linux 2 repo;
 # from `man yum`: 'Note that if the repo cannot be determined, "installed" is printed instead.'
@@ -36,22 +38,14 @@ yum groupinstall -y \
 
 # needed by Intel C/C++ compiler??? 2020 update 1 fails without these packages
 # graphical dependencies (may not be needed, but relatively small installations):
-yum install -y \
-  alsa-lib \
-  gtk2 \
-  gtk3 \
-  libXScrnSaver \
-  xorg-x11-server-Xorg
+if [ "${ARCH}" = "x86_64" ]; then
+  yum install -y \
+    alsa-lib \
+    gtk2 \
+    gtk3 \
+    libXScrnSaver \
+    xorg-x11-server-Xorg
+fi
 
 # install Java JDK
-cat <<'EOF' >/etc/yum.repos.d/adoptopenjdk.repo
-[AdoptOpenJDK]
-name=AdoptOpenJDK
-baseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/amazonlinux/$releasever/$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
-EOF
-
-yum update -y
-yum install -y adoptopenjdk-11-hotspot
+yum install -y java-11-amazon-corretto-headless
