@@ -12,7 +12,7 @@ AWS_EFA_INSTALLER_VERSION=1.9.5
 #   Intel Compiler serial number must be kept up-to-date in intel/silent.cfg
 # https://software.intel.com/en-us/articles/intel-cpp-compiler-release-notes
 #   to check compatible GCC release versions (after installation run `icc -v`)
-INTEL_PARALLEL_STUDIO_XE_URL='http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/16744/parallel_studio_xe_2020_update2_cluster_edition.tgz'
+INTEL_PARALLEL_STUDIO_XE_URL='https://registrationcenter-download.intel.com/akdlm/irc_nas/tec/17113/parallel_studio_xe_2020_update4_cluster_edition.tgz'
 
 ARCH=$(uname -m)
 
