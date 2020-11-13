@@ -1,10 +1,10 @@
 Build an image for remote development. Packer documentation is at (https://packer.io).
 
 For example, to build against an Amazon Linux 2 AMI execute:
-$ packer build -on-error=ask -var-file amazon-linux2/vars.json amazon-ebs.json
+$ packer build -on-error=ask -var-file amazon-linux2/vars.x86_64.json amazon-ebs.json
 
 Or to build against an Ubuntu AMI execute:
-$ packer build -on-error=ask -var-file ubuntu/vars-18.10.json amazon-ebs.json
+$ packer build -on-error=ask -var-file ubuntu/vars-18.10.x86_64.json amazon-ebs.json
 
 
 To connect to the build instance enable the debug flag to step through the build process and have

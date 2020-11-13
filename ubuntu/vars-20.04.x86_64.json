@@ -1,5 +1,7 @@
 {
-  "custom_image_name": "ubuntu-focal-20.04",
+  "arch": "x86_64",
+  "instance_type": "c5d",
+  "image_name": "ubuntu-focal-20.04",
   "ami_name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20200907-aced0818-eef1-427a-9e04-8ba38bada306-ami-0dba2cb6798deb6d8.4",
   "ami_owners": "679593333241",
   "ssh_username": "ubuntu"
