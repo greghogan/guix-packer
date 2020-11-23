@@ -5,7 +5,7 @@
 set -eufo pipefail
 
 # The packaged release version
-GUIX_VERSION=1.1.0
+GUIX_VERSION=1.2.0
 
 ARCH=$(uname -m)
 NPROCS=$(nproc --all)
