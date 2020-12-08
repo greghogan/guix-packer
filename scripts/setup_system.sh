@@ -66,7 +66,7 @@ wait
 # If an ephemeral disk is present, update the Guix service to build from the ephemeral disk;
 # the root disk is 8 GB by default and fio has been updated with a ceph dependency requiring 17+ GB
 # to build, which can be accommodated during build with an ephemeral disk
-cp /etc/systemd/system/guix-daemon.service.orig /etc/systemd/system/guix-daemon.service
+cp -pf /etc/systemd/system/guix-daemon.service.orig /etc/systemd/system/guix-daemon.service
 if [ -d "/volumes/nvme1n1" ]; then
   patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
 --- /etc/systemd/system/guix-daemon.service.orig
