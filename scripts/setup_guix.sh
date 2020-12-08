@@ -43,7 +43,7 @@ done
 
 # Run the daemon, and set it to automatically start on boot;
 # overwrite potential (blank) patched file from setup_system.sh
-/bin/cp -f ${CURRENT_GUIX}/lib/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service
+/bin/cp -pf ${CURRENT_GUIX}/lib/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service
 # make a copy of the original file which is used in setup_system.sh to modify the Guix service
 # to build on an ephemeral disk if present on the system
 cp /etc/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service.orig
