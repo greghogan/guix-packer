@@ -32,11 +32,11 @@ readonly SET_GUIX_PROFILE="export GUIX_PROFILE=${GUIX_PROFILE}"
 eval "${SET_GUIX_PROFILE}" && echo "${SET_GUIX_PROFILE}" >>~/.bashrc
 
 # Prepend PATH to second search for Guix binaries
-readonly SET_GUIX_BINARY_PATH="export PATH=\$HOME/.config/guix/current/bin:\${PATH:+:}\$PATH"
+readonly SET_GUIX_BINARY_PATH="export PATH=\$HOME/.config/guix/current/bin\${PATH:+:}\$PATH"
 eval "${SET_GUIX_BINARY_PATH}" && echo "${SET_GUIX_BINARY_PATH}" >>~/.bashrc
 
 # Prepend PATH to first search for user binaries
-readonly SET_HOME_BINARY_PATH="export PATH=\$HOME/bin:\$HOME/sbin:\${PATH:+:}\$PATH"
+readonly SET_HOME_BINARY_PATH="export PATH=\$HOME/bin:\$HOME/sbin\${PATH:+:}\$PATH"
 eval "${SET_HOME_BINARY_PATH}" && echo "${SET_HOME_BINARY_PATH}" >>~/.bashrc
 
 # Install UTF-8 locale and force initial build of Guix
