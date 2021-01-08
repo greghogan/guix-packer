@@ -67,6 +67,7 @@ cat <<EOF > /etc/guix/machines.scm.template
         (systems (list "${ARCH}-linux"))
         (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub)")
         (user "<user>")
+        (parallel-builds 1)
         (compression "none")))
 EOF
 
