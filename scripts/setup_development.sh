@@ -70,6 +70,7 @@ guix install \
   iperf \
   jq \
   less \
+  man-db \
   man-pages \
   netcat \
   numactl \
