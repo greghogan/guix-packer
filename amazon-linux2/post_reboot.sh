@@ -49,3 +49,8 @@ fi
 
 # install Java JDK
 yum install -y java-11-amazon-corretto-headless
+
+# install Intel ICX (cpp) and ICC (cpp-classic) compilers
+if [ "${ARCH}" = "x86_64" ]; then
+  yum install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+fi
