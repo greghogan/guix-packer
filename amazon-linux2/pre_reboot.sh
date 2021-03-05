@@ -10,6 +10,18 @@ amazon-linux-extras install -y \
   epel \
   kernel-ng
 
+# install Intel oneAPI repository
+# the GPG keys are installed below during "yum update -y"
+cat <<EOF > /etc/yum.repos.d/intel.repo
+[oneAPI]
+name=Intel(R) oneAPI repository
+baseurl=https://yum.repos.intel.com/oneapi
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+EOF
+
 # update all installed packages
 yum install -y deltarpm
 yum update -y

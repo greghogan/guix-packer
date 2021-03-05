@@ -8,12 +8,6 @@ GUIX_COMMIT=964bc9e5
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
 AWS_EFA_INSTALLER_VERSION=1.11.2
 
-# https://software.seek.intel.com/ps-l
-#   Intel Compiler serial number must be kept up-to-date in intel/silent.cfg
-# https://software.intel.com/en-us/articles/intel-cpp-compiler-release-notes
-#   to check compatible GCC release versions (after installation run `icc -v`)
-INTEL_PARALLEL_STUDIO_XE_URL='https://registrationcenter-download.intel.com/akdlm/irc_nas/tec/17113/parallel_studio_xe_2020_update4_cluster_edition.tgz'
-
 ARCH=$(uname -m)
 
 GUIX_PROFILE='/var/guix/profiles/per-user/${USER}/guix-profile'
@@ -103,18 +97,11 @@ fi
 
 # Intel Compiler
 if [ "${ARCH}" = "x86_64" ]; then
-  WGET ${INTEL_PARALLEL_STUDIO_XE_URL} parallel_studio_xe.tbz
-  tar xf parallel_studio_xe.tbz --transform "s|[^/]*|parallel_studio_xe|rSH" && rm -f parallel_studio_xe.tbz
-  cd parallel_studio_xe || exit
-  sudo ./install.sh --silent /tmp/silent.cfg || exit
-  cd .. || exit
-  rm -rf parallel_studio_xe
-
-  echo -e "\n# Intel Compiler" >>~/.bashrc
-  readonly SET_INTEL_BINARY_PATH="export PATH=\$PATH\${PATH:+:}/opt/intel/bin"
-  eval "${SET_INTEL_BINARY_PATH}" && echo "${SET_INTEL_BINARY_PATH}" >>~/.bashrc
+  cat <<-EOF >>~/.bash_profile
+	# setup Intel oneAPI environment
+	. /opt/intel/oneapi/setvars.sh > /dev/null
+	EOF
 fi
-rm -f /tmp/silent.cfg
 
 # Cleanup
 guix gc --delete-generations

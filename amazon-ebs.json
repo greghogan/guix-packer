@@ -95,11 +95,6 @@
       ]
     },
     {
-      "type": "file",
-      "source": "intel/silent.cfg",
-      "destination": "/tmp/silent.cfg"
-    },
-    {
       "type": "shell",
       "script": "scripts/setup_development.sh"
     },
