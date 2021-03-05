@@ -6,7 +6,7 @@ set -efo pipefail
 GUIX_COMMIT=964bc9e5
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
-AWS_EFA_INSTALLER_VERSION=1.10.1
+AWS_EFA_INSTALLER_VERSION=1.11.2
 
 # https://software.seek.intel.com/ps-l
 #   Intel Compiler serial number must be kept up-to-date in intel/silent.cfg
