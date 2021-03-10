@@ -1,30 +1,21 @@
 #!/bin/bash -x
 
-# exit immediately on failure (even when piping), treat unset variables and
-# parameters as an error, and disable filename expansion (globbing)
-set -eufo pipefail
+# exit immediately on failure (even when piping) and disable filename expansion (globbing)
+set -efo pipefail
 
-# generate and authorize an SSH public key, shared by all nodes in the cluster
-ssh-keygen -N "" -t rsa -f ~/.ssh/id_rsa
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-chmod 600 ~/.ssh/authorized_keys
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
+AWS_EFA_INSTALLER_VERSION=1.11.2
 
-# allow root passwordless login for offload builds
-sudo cat /root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+ARCH=$(uname -m)
 
-# enable the sharing of multiple sessions over a single network connection
-# with ControlMaster and ControlPath
-mkdir .ssh/sockets
+function WGET() { until wget --tries=1 --timeout=10 --progress=dot:mega "$1" -O "$2"; do rm -f "$2"; done }
 
-cat <<EOF > ~/.ssh/config
-Host *
-    LogLevel ERROR
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    ControlMaster auto
-    ControlPath ~/.ssh/sockets/%r@%h:%p
-EOF
-chmod 600 ~/.ssh/config
+# share SSH configuration from root user
+sudo cp -a /root/.ssh ~
+sudo chown -R "${USER}": ~/.ssh
+
+# remove configuration preventing 'root' login
+sed -i s/^.*ssh-rsa/ssh-rsa/ ~/.ssh/authorized_keys
 
 
 # configure AWS CLI
@@ -48,8 +39,8 @@ aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}
 EOF
 
 
-# Configure the shell
-cat <<EOF >> ~/.bashrc
+# configure the shell
+cat <<EOF >> ~/.bash_profile
 
 alias cp='cp -i'
 alias mv='mv -i'
@@ -57,7 +48,7 @@ alias rm='rm -i'
 EOF
 
 
-# Configure screen
+# configure screen
 cat <<EOF >> ~/.screenrc
 # See the Screen FAQ,
 #   "Q: My xterm scrollbar does not work with screen."
@@ -69,7 +60,7 @@ layout save default
 EOF
 
 
-# Configure htop via bashrc conditional on the number of runtime processors
+# configure htop via bash_profile conditional on the number of runtime processors
 mkdir -p ~/.config/htop
 cat <<EOF_BASH_PROFILE >> ~/.bash_profile
 
@@ -121,7 +112,55 @@ delay=15
 EOF_HTOPRC
 EOF_BASH_PROFILE
 
+# system utility packages
+if [ "${ARCH}" = "x86_64" ]; then
+guix install \
+  cpuid \
+  fio
+fi
 
-# delete temporary files and clear command history
-rm -f packer.pub packer
+guix install \
+  binutils \
+  coreutils \
+  curl \
+  diffoscope \
+  diffutils \
+  dos2unix \
+  git \
+  htop \
+  iftop \
+  iotop \
+  iperf \
+  jq \
+  less \
+  man-db \
+  man-pages \
+  netcat \
+  numactl \
+  parallel \
+  pdsh \
+  poke \
+  socat \
+  tar \
+  time \
+  zstd
+source ~/.bashrc
+
+# install AWS EFA (Elastic Fabric Adaptor)
+# this also installs Amazon's OpenMPI build among other installed packages
+# note: no current support for aarch64 instances:
+#   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
+if [ "${ARCH}" = "x86_64" ]; then
+  WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
+  tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
+  cd aws-efa-installer || exit
+  sudo ./efa_installer.sh -y || exit
+  cd .. || exit
+  rm -rf aws-efa-installer
+fi
+
+# remove old generations but defer cleanup to the final script
+guix gc --collect-garbage=0 --delete-generations
+
+# clear command history
 > ~/.bash_history && history -c

@@ -1,8 +1,8 @@
-#!/bin/sh -x
+#!/bin/bash -x
 
-# exit immediately on failure, treat unset variables and parameters as an
-# error, and disable filename expansion (globbing)
-set -euf
+# exit immediately on failure (even when piping), treat unset variables and
+# parameters as an error, and disable filename expansion (globbing)
+set -eufo pipefail
 
 # install newer kernel
 amazon-linux-extras install -y \
