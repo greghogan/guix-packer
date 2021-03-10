@@ -13,15 +13,16 @@ systemctl restart sshd.service
 ssh-keygen -N "" -t rsa -f ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
+# enable the sharing of multiple sessions over a single network connection
+# with ControlMaster and ControlPath
+mkdir .ssh/sockets
+
 cat <<EOF > ~/.ssh/config
 Host *
     LogLevel ERROR
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
 EOF
 chmod 600 ~/.ssh/config
-
-
-# delete temporary files and clear command history
-rm -rf /tmp/*
-> ~/.bash_history && history -c

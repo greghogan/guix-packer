@@ -1,8 +1,8 @@
-#!/bin/sh -x
+#!/bin/bash -x
 
-# exit immediately on failure, treat unset variables and parameters as an
-# error, and disable filename expansion (globbing)
-set -euf
+# exit immediately on failure (even when piping), treat unset variables and
+# parameters as an error, and disable filename expansion (globbing)
+set -eufo pipefail
 
 ARCH=$(uname -m)
 
@@ -35,17 +35,6 @@ yum install -y \
 # command in .bashrc
 yum groupinstall -y \
   "Development Tools"
-
-# needed by Intel C/C++ compiler??? 2020 update 1 fails without these packages
-# graphical dependencies (may not be needed, but relatively small installations):
-if [ "${ARCH}" = "x86_64" ]; then
-  yum install -y \
-    alsa-lib \
-    gtk2 \
-    gtk3 \
-    libXScrnSaver \
-    xorg-x11-server-Xorg
-fi
 
 # install Java JDK
 yum install -y java-11-amazon-corretto-headless
