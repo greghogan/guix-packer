@@ -106,6 +106,14 @@
     },
     {
       "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "GUIX_COMMIT={{user `guix_commit`}}"
+      ],
+      "script": "scripts/install_guix.sh"
+    },
+    {
+      "type": "shell",
       "environment_vars": [
         "GUIX_COMMIT={{user `guix_commit`}}"
       ],
