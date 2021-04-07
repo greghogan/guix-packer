@@ -21,7 +21,8 @@ guix install \
   git \
   gmp \
   json-modern-cxx \
-  make
+  make \
+  valgrind
 source ~/.bashrc
 
 # configure ccache
