@@ -138,17 +138,11 @@
     {
       "type": "shell",
       "execute_command": "sudo -u build -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "environment_vars": [
-        "GUIX_COMMIT={{user `guix_commit`}}"
-      ],
       "script": "scripts/setup_build.sh"
     },
     {
       "type": "shell",
       "execute_command": "sudo -u offload -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "environment_vars": [
-        "GUIX_COMMIT={{user `guix_commit`}}"
-      ],
       "script": "scripts/setup_offload.sh"
     },
     {
