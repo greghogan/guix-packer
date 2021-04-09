@@ -73,9 +73,13 @@ ln -s /etc/guix/ /usr/local/etc/guix
 # prevent cloud-init from changing ssh host keys on new instances
 sed -i 's/^ssh_deletekeys:   true$/ssh_deletekeys:   false/' /etc/cloud/cloud.cfg
 
+# allow members of the wheel to sudo without entering a password
+sed -i 's/^%wheel\tALL=(ALL)\tALL$/# %wheel\tALL=(ALL)\tALL/' /etc/sudoers
+sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL$/%wheel\tALL=(ALL)\tNOPASSWD: ALL/' /etc/sudoers
+
 
 # create user for local software builds
-useradd build
+useradd -G wheel build
 
 # share SSH configuration to the offload user
 sudo cp -a ~/.ssh ~build
@@ -86,7 +90,7 @@ sed -i 's/^.*ssh-rsa/ssh-rsa/' ~build/.ssh/authorized_keys
 
 
 # create user for offload builds as specified above in the machines.scm template
-useradd offload
+useradd -G wheel offload
 
 # share SSH configuration to the offload user
 sudo cp -a ~/.ssh ~offload
