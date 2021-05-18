@@ -16,7 +16,8 @@ WGET https://ftp.gnu.org/gnu/guix/guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.
 
 # verify signature for download
 while
-  timeout 10 gpg --keyserver na.pool.sks-keyservers.net --recv-keys 3CE464558A84FDC69DB40CFB090B11993D9AEBB5
+  # key fetch from https://guix.gnu.org/manual/en/html_node/Binary-Installation.html
+  timeout 10 sh -c "wget 'https://sv.gnu.org/people/viewgpg.php?user_id=127547' -qO - | gpg --import -"
   ! gpg --verify guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz.sig
 do
   echo "Retrying GPG keyserver in 5 seconds"
