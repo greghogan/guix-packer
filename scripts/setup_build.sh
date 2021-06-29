@@ -22,6 +22,8 @@ guix install \
   gmp \
   json-modern-cxx \
   make \
+  man-db \
+  man-pages \
   valgrind
 source ~/.bashrc
 
