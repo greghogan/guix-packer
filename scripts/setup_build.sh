@@ -20,10 +20,12 @@ guix install \
   gflags \
   git \
   gmp \
+  info-reader \
   json-modern-cxx \
   make \
   man-db \
   man-pages \
+  pkg-config \
   valgrind
 source ~/.bashrc
 

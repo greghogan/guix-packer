@@ -128,6 +128,7 @@ guix install \
   git \
   htop \
   iftop \
+  info-reader \
   iotop \
   iperf \
   jq \
@@ -138,6 +139,7 @@ guix install \
   numactl \
   parallel \
   pdsh \
+  pkg-config \
   poke \
   socat \
   tar \
