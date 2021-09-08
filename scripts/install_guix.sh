@@ -34,3 +34,10 @@ eval "${SET_GUIX_LOCPATH}" && echo "${SET_GUIX_LOCPATH}" >>~/.bashrc
 # in an error if the source file is not present
 readonly SOURCE_GUIX_PROFILE="source \${GUIX_PROFILE}/etc/profile"
 eval "${SOURCE_GUIX_PROFILE}" && echo "${SOURCE_GUIX_PROFILE}" >>~/.bashrc
+
+echo >>~/.bashrc
+
+echo "# configure Guix to secondarily search system documentation" >>~/.bashrc
+echo "export INFOPATH=\$INFOPATH\${INFOPATH:+:}/usr/share/info" >>~/.bashrc
+echo "export MANPATH=\$MANPATH\${MANPATH:+:}/usr/share/man" >>~/.bashrc
+echo "export PKG_CONFIG_PATH=\$PKG_CONFIG_PATH\${PKG_CONFIG_PATH:+:}/usr/share/pkgconfig" >>~/.bashrc
