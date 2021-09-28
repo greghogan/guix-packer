@@ -70,8 +70,8 @@ if [ "\$(nproc --all)" -ge 8 ]; then
     cat <<-EOF
 	left_meters=LeftCPUs2 CPU CPU Memory Memory
 	left_meter_modes=1 2 1 1 2
-	right_meters=RightCPUs2 Tasks LoadAverage Uptime Clock Hostname
-	right_meter_modes=1 2 2 2 2 2
+	right_meters=RightCPUs2 Tasks LoadAverage Uptime Hostname DiskIO NetworkIO
+	right_meter_modes=1 2 2 2 2 2 2
 	EOF
   )
 else
@@ -79,8 +79,8 @@ else
     cat <<-EOF
 	left_meters=CPU CPU AllCPUs Memory Memory
 	left_meter_modes=2 1 1 1 2
-	right_meters=Tasks LoadAverage Uptime Clock Hostname
-	right_meter_modes=2 2 2 2 2
+	right_meters=Tasks LoadAverage Uptime Hostname DiskIO NetworkIO
+	right_meter_modes=2 2 2 2 2 2
 	EOF
   )
 fi
