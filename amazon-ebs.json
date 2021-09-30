@@ -28,7 +28,13 @@
       "tags": {
         "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
       },
+      "fleet_tags": {
+        "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
+      },
       "run_tags": {
+        "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
+      },
+      "run_volume_tags": {
         "Name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}"
       },
       "snapshot_tags": {
