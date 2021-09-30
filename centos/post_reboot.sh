@@ -6,4 +6,9 @@ set -euf
 
 # install new packages
 yum install -y \
-  patch
+  patch \
+  yum-utils
+
+# install Packer
+yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+yum -y install packer
