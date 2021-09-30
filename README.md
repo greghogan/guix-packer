@@ -4,7 +4,11 @@ For example, to build against an Amazon Linux 2 AMI execute:
 $ packer build -var-file amazon-linux2/vars.x86_64.json amazon-ebs.json
 
 Or to build against an Ubuntu AMI execute:
-$ packer build -var-file ubuntu/vars-18.10.x86_64.json amazon-ebs.json
+$ packer build -var-file ubuntu/vars-latest.x86_64.json amazon-ebs.json
+
+
+To enable logging set the environment variable PACKER_LOG:
+$ PACKER_LOG=1 packer build [...]
 
 
 To connect to the build instance enable the debug flag to step through the build process and have
@@ -28,4 +32,12 @@ $ aws ec2 describe-images --owners aws-marketplace --filters "Name=name,Values=*
 
 If the `jq` command is installed then the previous `describe-images` commands can be piped as
 follows to parse the "OwnerID" and "Name" fields":
-$ aws ec2 describe-images [...] | jq -r '.Images[] | "\(.OwnerId)\t\(.Name)"'
+$ aws ec2 describe-images [...] | jq -r '.Images[] | "\(.OwnerId)\t\(.Name)"' | sort
+
+| productID | OS |
+| ----------- | ----------- |
+| b7ee8a69-ee97-4a49-9e68-afaee216db2e | CentOS 7 |
+| 471d022d-974f-4f9c-8e39-b00d9b583833 | CentOS 8 |
+| 3b73ef49-208f-47e1-8a6e-4ae768d8a333 | Ubuntu 18.04 LTS |
+| aced0818-eef1-427a-9e04-8ba38bada306 | Ubuntu 20.04 LTS |
+| 9b889f11-a864-4343-9340-1b2042b8cd6c | Ubuntu 21.04 |
