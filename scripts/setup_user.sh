@@ -90,7 +90,7 @@ cat <<EOF_HTOPRC > ~/.config/htop/htoprc
 # The parser is also very primitive, and not human-friendly.
 fields=0 48 17 18 38 39 40 2 46 47 49 13 14 15 16 20 50 1
 sort_key=46
-sort_direction=1
+sort_direction=-1
 hide_threads=0
 hide_kernel_threads=1
 hide_userland_threads=0
