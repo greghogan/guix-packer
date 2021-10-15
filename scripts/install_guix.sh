@@ -26,9 +26,6 @@ eval "${SET_HOME_BINARY_PATH}" && echo "${SET_HOME_BINARY_PATH}" >>~/.bashrc
 # install UTF-8 locale and force initial build of Guix
 guix install glibc-utf8-locales
 
-readonly SET_GUIX_LOCPATH="export GUIX_LOCPATH=\${GUIX_PROFILE}/lib/locale"
-eval "${SET_GUIX_LOCPATH}" && echo "${SET_GUIX_LOCPATH}" >>~/.bashrc
-
 # the profile does not look to be available until after the installation of
 # glibc-utf8-locales, the first installed package, and the 'eval' will result
 # in an error if the source file is not present
