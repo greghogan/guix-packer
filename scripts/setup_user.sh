@@ -47,7 +47,6 @@ alias mv='mv -i'
 alias rm='rm -i'
 EOF
 
-
 # configure screen
 cat <<EOF >> ~/.screenrc
 # See the Screen FAQ,
@@ -58,7 +57,6 @@ termcapinfo xterm ti@:te@
 # This line makes Detach and Re-attach without losing the regions/windows layout
 layout save default
 EOF
-
 
 # configure htop via bash_profile conditional on the number of runtime processors
 mkdir -p ~/.config/htop

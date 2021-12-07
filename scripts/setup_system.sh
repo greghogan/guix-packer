@@ -16,7 +16,6 @@ soft core unlimited
 hard core unlimited
 EOF
 
-
 # mount attached volumes on startup
 chmod +x /etc/rc.local
 cat <<"EOF" >> /etc/rc.local

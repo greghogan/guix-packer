@@ -82,7 +82,7 @@ sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL$/%wheel\tALL=(ALL)\tNOPASSWD: ALL/
 # create user for local software builds
 useradd -G wheel build
 
-# share SSH configuration to the offload user
+# share SSH configuration to the build user
 sudo cp -a ~/.ssh ~build
 chown -R build: ~build/.ssh
 

@@ -160,7 +160,7 @@
     },
     {
       "type": "shell",
-      "execute_command": "sudo -i -u build sh -c '{{ .Vars }} {{ .Path }}'",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
       "script": "scripts/cleanup.sh"
     }
   ]
