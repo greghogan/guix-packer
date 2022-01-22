@@ -10,8 +10,8 @@
     {
       "type": "amazon-ebs",
       "ami_name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}",
-      "instance_type": "{{user `instance_type`}}.xlarge",
-      "region": "us-east-1",
+      "instance_type": "{{user `instance_type`}}.large",
+      "region": "us-east-2",
       "spot_price": "auto",
       "source_ami_filter": {
         "filters": {
