@@ -4,7 +4,7 @@
 set -efo pipefail
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
-AWS_EFA_INSTALLER_VERSION=1.11.2
+AWS_EFA_INSTALLER_VERSION=1.14.1
 
 ARCH=$(uname -m)
 
@@ -23,7 +23,7 @@ mkdir ~/.aws
 
 cat <<EOF > ~/.aws/config
 [default]
-region=us-east-1
+region=us-east-2
 output=json
 s3 =
   max_concurrent_requests = 10
