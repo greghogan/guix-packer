@@ -28,7 +28,7 @@ package-cleanup -y --oldkernels --count=1
 yum groupinstall -y "Development Tools"
 
 # install Java JDK
-yum install -y java-11-amazon-corretto-headless
+yum install -y java-17-amazon-corretto-headless
 
 # install Intel ICX (cpp) and ICC (cpp-classic) compilers
 if [ "${ARCH}" = "x86_64" ]; then
