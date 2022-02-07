@@ -5,10 +5,10 @@
 set -eufo pipefail
 
 GUIX_PROFILE='/var/guix/profiles/per-user/${USER}/guix-profile'
+function RETRY() { while ! "$@"; do echo "Retrying '$*' in 5 seconds" ; sleep 5; done }
 
 # force creation of a profile by updating to the current Guix version, to the (optional) commit
-/var/guix/profiles/per-user/root/current-guix/bin/guix pull ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}}
-
+RETRY /var/guix/profiles/per-user/root/current-guix/bin/guix pull ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}}
 echo >>~/.bashrc
 
 # import environment variables from Guix package installations
