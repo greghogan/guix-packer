@@ -5,7 +5,6 @@
 set -eufo pipefail
 
 ARCH=$(uname -m)
-NPROCS=$(nproc --all)
 
 CURRENT_GUIX=/var/guix/profiles/per-user/root/current-guix
 function WGET() { wget --progress=dot:mega "$@"; }
@@ -32,7 +31,7 @@ rm -f guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
 
 # create the group and user accounts for build users
 groupadd --system guixbuild
-for i in $(seq -w 1 "${NPROCS}"); do
+for i in $(seq -w 1 8); do
   useradd -g guixbuild -G guixbuild \
     -d /var/empty -s "$(command -v nologin)" \
     -c "Guix build user ${i}" --system \
