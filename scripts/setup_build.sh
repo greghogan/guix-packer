@@ -6,27 +6,8 @@ set -efo pipefail
 ARCH=$(uname -m)
 
 # compiler and library packages
-guix install \
-  abseil-cpp \
-  boost \
-  ccache \
-  clang \
-  cmake \
-  cxxopts \
-  fmt \
-  folly \
-  gcc-toolchain \
-  gdb \
-  gflags \
-  git \
-  gmp \
-  info-reader \
-  json-modern-cxx \
-  make \
-  man-db \
-  man-pages \
-  pkg-config \
-  valgrind
+cp /tmp/manifest/build.scm manifest.scm
+guix package --manifest=manifest.scm
 source ~/.bashrc
 
 # configure ccache

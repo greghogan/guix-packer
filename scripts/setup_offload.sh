@@ -4,10 +4,9 @@
 set -efo pipefail
 
 # the following packages must be installed on the offload host
-guix install \
-  guix \
-  guile \
-  guile-ssh
+cp /tmp/manifest/offload.scm manifest.scm
+guix package --manifest=manifest.scm
+source ~/.bashrc
 
 # cleanup
 guix gc --delete-generations

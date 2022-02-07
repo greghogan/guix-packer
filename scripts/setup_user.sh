@@ -111,39 +111,8 @@ EOF_HTOPRC
 EOF_BASH_PROFILE
 
 # system utility packages
-if [ "${ARCH}" = "x86_64" ]; then
-guix install \
-  cpuid \
-  fio
-fi
-
-guix install \
-  binutils \
-  coreutils \
-  curl \
-  diffoscope \
-  diffutils \
-  dos2unix \
-  git \
-  htop \
-  iftop \
-  info-reader \
-  iotop \
-  iperf \
-  jq \
-  less \
-  man-db \
-  man-pages \
-  netcat \
-  numactl \
-  parallel \
-  pdsh \
-  pkg-config \
-  poke \
-  socat \
-  tar \
-  time \
-  zstd
+cp /tmp/manifest/user.scm manifest.scm
+guix package --manifest=manifest.scm
 source ~/.bashrc
 
 # install AWS EFA (Elastic Fabric Adaptor)
