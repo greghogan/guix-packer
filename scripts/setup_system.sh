@@ -67,19 +67,28 @@ wait
 # to build, which can be accommodated during build with an ephemeral disk
 cp -pf /etc/systemd/system/guix-daemon.service.orig /etc/systemd/system/guix-daemon.service
 if [ -d "/volumes/nvme1n1" ]; then
-  patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
+  ENVIRONMENT="TMPDIR=/volumes/nvme1n1/tmp"
+fi
+
+# grow maximum number of jobs as the base-2 logarithm of the number of cores;
+# there is no back-off due to CPU load as with offload builds; when substitutes
+# are enabled this supports concurrent downloads
+EXEC_START="--max-jobs=$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(`nproc`)" | bc)"
+
+patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
 --- /etc/systemd/system/guix-daemon.service.orig
 +++ /etc/systemd/system/guix-daemon.service
-@@ -7,7 +7,7 @@
+@@ -6,8 +6,8 @@
+ Description=Build daemon for GNU Guix
 
  [Service]
- ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon --build-users-group=guixbuild
+-ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon --build-users-group=guixbuild
 -Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
-+Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8 TMPDIR=/volumes/nvme1n1/tmp
++ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon --build-users-group=guixbuild ${EXEC_START}
++Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8 ${ENVIRONMENT}
  RemainAfterExit=yes
  StandardOutput=syslog
  StandardError=syslog
 EOF_PATCH
-fi
 systemctl daemon-reload && systemctl restart guix-daemon
 EOF
