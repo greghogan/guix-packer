@@ -112,8 +112,8 @@ EOF_BASH_PROFILE
 
 # system utility packages
 cp /tmp/manifest/user.scm manifest.scm
-guix package --manifest=manifest.scm
-source ~/.bashrc
+# manifest can be installed with:
+# guix package --manifest=manifest.scm && source ~/.bashrc
 
 # install AWS EFA (Elastic Fabric Adaptor)
 # this also installs Amazon's OpenMPI build among other installed packages
@@ -127,9 +127,6 @@ if [ "${ARCH}" = "x86_64" ]; then
   cd .. || exit
   rm -rf aws-efa-installer
 fi
-
-# remove old generations but defer cleanup to the final script
-guix gc --collect-garbage=0 --delete-generations
 
 # clear command history
 > ~/.bash_history && history -c

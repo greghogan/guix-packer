@@ -7,6 +7,7 @@ set -eufo pipefail
 ARCH=$(uname -m)
 
 CURRENT_GUIX=/var/guix/profiles/per-user/root/current-guix
+function RETRY() { while ! "$@"; do echo "Retrying '$*' in 5 seconds" ; sleep 5; done }
 function WGET() { wget --progress=dot:mega "$@"; }
 
 # download Guix package and signature
@@ -38,19 +39,13 @@ for i in $(seq -w 1 16); do
     "guixbuilder${i}"
 done
 
-# run the daemon, and set it to automatically start on boot;
-# overwrite potential (blank) patched file from setup_system.sh
-/bin/cp -pf ${CURRENT_GUIX}/lib/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service
-# make a copy of the original file which is used in setup_system.sh to modify the Guix service
-# to build on an ephemeral disk if present on the system
-cp /etc/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service.orig
-systemctl start guix-daemon && systemctl enable guix-daemon
-
-# make the Info version of this manual available there
+# make the Info version of this manual available
 ln -s ${CURRENT_GUIX}/share/info/* /usr/local/share/info
 
-# use substitutes from ci.guix.gnu.org
-${CURRENT_GUIX}/bin/guix archive --authorize < ${CURRENT_GUIX}/share/guix/ci.guix.gnu.org.pub
+# enable substitutes from ci.guix.gnu.org
+if "${GUIX_SUBSTITUTES}" ; then
+  ${CURRENT_GUIX}/bin/guix archive --authorize < ${CURRENT_GUIX}/share/guix/ci.guix.gnu.org.pub
+fi
 
 # generate and self-authenticate a new key pair for the daemon, a prerequisite before archives can be exported
 ${CURRENT_GUIX}/bin/guix archive --generate-key
@@ -77,6 +72,56 @@ sed -i 's/^ssh_deletekeys:   true$/ssh_deletekeys:   false/' /etc/cloud/cloud.cf
 sed -i 's/^%wheel\tALL=(ALL)\tALL$/# %wheel\tALL=(ALL)\tALL/' /etc/sudoers
 sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL$/%wheel\tALL=(ALL)\tNOPASSWD: ALL/' /etc/sudoers
 
+# run the daemon, and set it to automatically start on boot;
+# overwrite potential (blank) patched file from setup_system.sh
+/bin/cp -pf ${CURRENT_GUIX}/lib/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service
+# make a copy of the original file which is used in setup_system.sh to modify the Guix service
+# to build on an ephemeral disk if present on the system
+cp /etc/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.service.orig
+
+# bootstrap builds fail on EBS filesystems so build on tmpfs if no substitutes
+if ! "${GUIX_SUBSTITUTES}" ; then
+  # from patch in setup_system.sh
+  EXEC_START="--max-jobs=$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(`nproc`)" | bc)"
+  patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
+--- guix-daemon.service
++++ guix-daemon.service
+@@ -7,7 +7,7 @@
+
+ [Service]
+ ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon \\
+-    --build-users-group=guixbuild --discover=no
++    --build-users-group=guixbuild --discover=no ${EXEC_START}
+ Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
+ RemainAfterExit=yes
+ StandardOutput=syslog
+EOF_PATCH
+
+  mount -t tmpfs -o size=100% swap /tmp
+
+  # copy both /gnu and /var/guix to support running this code for future updates
+  rsync -aHAXR /gnu /tmp
+  rsync -aHAXR /var/guix /tmp
+
+  mount --bind /tmp/gnu /gnu
+  mount --bind /tmp/var/guix /var/guix
+
+  systemctl start guix-daemon
+
+  RETRY /var/guix/profiles/per-user/root/current-guix/bin/guix pull ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}}
+
+  systemctl stop guix-daemon
+
+  umount /gnu
+  umount /var/guix
+
+  rsync -aHAX /tmp/gnu/ /gnu/
+  rsync -aHAX /tmp/var/guix/ /var/guix/
+
+  umount /tmp
+fi
+
+systemctl start guix-daemon && systemctl enable guix-daemon
 
 # create user for local software builds
 useradd -G wheel build

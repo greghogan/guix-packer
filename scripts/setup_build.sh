@@ -7,8 +7,8 @@ ARCH=$(uname -m)
 
 # compiler and library packages
 cp /tmp/manifest/build.scm manifest.scm
-guix package --manifest=manifest.scm
-source ~/.bashrc
+# manifest can be installed with:
+# guix package --manifest=manifest.scm && source ~/.bashrc
 
 # configure ccache
 mkdir -p ~/.ccache
@@ -24,9 +24,6 @@ if [ "${ARCH}" = "x86_64" ]; then
 	. /opt/intel/oneapi/setvars.sh > /dev/null
 	EOF
 fi
-
-# remove old generations but defer cleanup to the final script
-guix gc --collect-garbage=0 --delete-generations
 
 # clear command history
 > ~/.bash_history && history -c

@@ -3,14 +3,15 @@
     "aws_access_key_id": "",
     "aws_secret_access_key": "",
     "guix_version": "1.3.0",
-    "guix_commit": "a0178d34"
+    "guix_commit": "a0178d34",
+    "guix_substitutes": "false"
   },
   "sensitive-variables": ["aws_access_key_id", "aws_secret_access_key"],
   "builders": [
     {
       "type": "amazon-ebs",
       "ami_name": "guix/{{user `image_name`}}/{{user `arch`}}/{{isotime \"20060102\"}}",
-      "instance_type": "{{user `instance_type`}}.large",
+      "instance_type": "{{user `instance_type`}}.xlarge",
       "region": "us-east-2",
       "spot_price": "auto",
       "source_ami_filter": {
@@ -43,7 +44,7 @@
       "launch_block_device_mappings": [
         {
           "device_name": "/dev/xvda",
-          "volume_size": 14,
+          "volume_size": 20,
           "volume_type": "gp3",
           "delete_on_termination": true
         }
@@ -58,6 +59,9 @@
       "type": "shell",
       "pause_before": "15s",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "GUIX_SUBSTITUTES={{user `guix_substitutes`}}"
+      ],
       "script": "scripts/setup_system.sh"
     },
     {
@@ -95,16 +99,11 @@
       "pause_before": "30s",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
       "environment_vars": [
-        "GUIX_VERSION={{user `guix_version`}}"
+        "GUIX_VERSION={{user `guix_version`}}",
+        "GUIX_COMMIT={{user `guix_commit`}}",
+        "GUIX_SUBSTITUTES={{user `guix_substitutes`}}"
       ],
       "script": "scripts/setup_guix.sh"
-    },
-    {
-      "type": "shell",
-      "expect_disconnect": true,
-      "inline": [
-        "sudo reboot"
-      ]
     },
     {
       "type": "shell",
