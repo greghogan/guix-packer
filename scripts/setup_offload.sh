@@ -5,15 +5,7 @@ set -efo pipefail
 
 # the following packages must be installed on the offload host
 cp /tmp/manifest/offload.scm manifest.scm
-guix package --manifest=manifest.scm
-source ~/.bashrc
-
-# cleanup
-guix gc --delete-generations
-# 'optimize' does create free space despite no intentional disabling of the daemon's automatic deduplication
-# from the guix gc man page:
-#   "this option is primarily useful when the daemon was running with --disable-deduplication"
-guix gc --optimize --delete-generations
+guix package --manifest=manifest.scm && source ~/.bashrc
 
 # clear command history
 > ~/.bash_history && history -c

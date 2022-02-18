@@ -1,6 +1,6 @@
 {
   "arch": "x86_64",
-  "instance_type": "c6i",
+  "instance_type": "r6i",
   "image_name": "amazon-linux2",
   "ami_name": "amzn2-ami-hvm-2.0.20210813.1-x86_64-gp2",
   "ami_owners": "137112412989",

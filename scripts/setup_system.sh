@@ -18,7 +18,7 @@ EOF
 
 # mount attached volumes on startup
 chmod +x /etc/rc.local
-cat <<"EOF" >> /etc/rc.local
+cat <<EOF >> /etc/rc.local
 
 # remove existing volume directories
 # run from root and silence output
@@ -27,68 +27,69 @@ rmdir -p --ignore-fail-on-non-empty volumes/*
 popd > /dev/null
 
 format_and_mount() {
-    disk=$1
-    mount_options=$2
+    disk=\$1
+    mount_options=\$2
 
     # require block device to not be a symbolic link;
     # EBS devices may be symlinked xvda to nvme0n1
-    if [ -b "/dev/${disk}" -a ! -h "/dev/${disk}" ]; then
-        blockdev --setra 512 /dev/${disk}
-        echo 1024 > /sys/block/${disk}/queue/nr_requests
+    if [ -b "/dev/\${disk}" -a ! -h "/dev/\${disk}" ]; then
+        blockdev --setra 512 /dev/\${disk}
+        echo 1024 > /sys/block/\${disk}/queue/nr_requests
 
         # attempt to format disk
-        /sbin/mkfs.ext4 -m 0 ${mount_options} /dev/${disk}
+        /sbin/mkfs.ext4 -m 0 \${mount_options} /dev/\${disk}
 
         # mount if format successful
-        if [ $? -eq 0 ]; then
-            mkdir -p /volumes/${disk}
-            mount -o init_itable=0 /dev/${disk} /volumes/${disk}
+        if [ \$? -eq 0 ]; then
+            mkdir -p /volumes/\${disk}
+            mount -o init_itable=0 /dev/\${disk} /volumes/\${disk}
 
-            mkdir -p /volumes/${disk}/tmp
-            chmod 777 /volumes/${disk}/tmp
+            mkdir -p /volumes/\${disk}/tmp
+            chmod 777 /volumes/\${disk}/tmp
         fi
     fi
 }
 
 # ephemeral disks are symlinked xvda to nvme0n1, ...
 #for id in {a..z}; do
-#    format_and_mount xvd${id} &
+#    format_and_mount xvd\${id} &
 #done
 
 for id in {0..31}; do
-    format_and_mount nvme${id}n1 "-E nodiscard" &
+    format_and_mount nvme\${id}n1 "-E nodiscard" &
 done
 
 # don't continue until disks have finished mounting
 wait
 
-# If an ephemeral disk is present, update the Guix service to build from the ephemeral disk;
-# the root disk is 8 GB by default and fio has been updated with a ceph dependency requiring 17+ GB
-# to build, which can be accommodated during build with an ephemeral disk
-cp -pf /etc/systemd/system/guix-daemon.service.orig /etc/systemd/system/guix-daemon.service
-if [ -d "/volumes/nvme1n1" ]; then
-  ENVIRONMENT="TMPDIR=/volumes/nvme1n1/tmp"
-fi
-
 # grow maximum number of jobs as the base-2 logarithm of the number of cores;
 # there is no back-off due to CPU load as with offload builds; when substitutes
 # are enabled this supports concurrent downloads
-EXEC_START="--max-jobs=$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(`nproc`)" | bc)"
+EXEC_START="--max-jobs=\$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(\`nproc\`)" | bc)"
+
+if ! "${GUIX_SUBSTITUTES}" ; then
+  # from https://guix.gnu.org/manual/en/html_node/Invoking-guix_002ddaemon.html:
+  #   setting --gc-keep-derivations to yes causes liveness to flow from outputs to derivations, and
+  #   setting --gc-keep-outputs to yes causes liveness to flow from derivations to outputs. When
+  #   both are set to yes, the effect is to keep all the build prerequisites (the sources, compiler,
+  #   libraries, and other build-time tools) of live objects in the store, regardless of whether
+  #   these prerequisites are reachable from a GC root. This is convenient for developers since it
+  #   saves rebuilds or downloads.
+  EXEC_START="\${EXEC_START} --gc-keep-outputs=yes --gc-keep-derivations=yes"
+fi
 
 patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
---- /etc/systemd/system/guix-daemon.service.orig
-+++ /etc/systemd/system/guix-daemon.service
-@@ -6,8 +6,8 @@
- Description=Build daemon for GNU Guix
+--- guix-daemon.service
++++ guix-daemon.service
+@@ -7,7 +7,7 @@
 
  [Service]
--ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon --build-users-group=guixbuild
--Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
-+ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon --build-users-group=guixbuild ${EXEC_START}
-+Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8 ${ENVIRONMENT}
+ ExecStart=/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon \\\\
+-    --build-users-group=guixbuild --discover=no
++    --build-users-group=guixbuild --discover=no \${EXEC_START}
+ Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
  RemainAfterExit=yes
  StandardOutput=syslog
- StandardError=syslog
 EOF_PATCH
 systemctl daemon-reload && systemctl restart guix-daemon
 EOF
