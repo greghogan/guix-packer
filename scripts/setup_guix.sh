@@ -82,7 +82,8 @@ cp /etc/systemd/system/guix-daemon.service /etc/systemd/system/guix-daemon.servi
 # bootstrap builds fail on EBS filesystems so build on tmpfs if no substitutes
 if ! "${GUIX_SUBSTITUTES}" ; then
   # from patch in setup_system.sh
-  EXEC_START="--max-jobs=$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(`nproc`)" | bc)"
+  MAX_JOBS="$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(`nproc`)" | bc)"
+  EXEC_START="--max-silent-time=1800 --max-jobs=${MAX_JOBS}"
   patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/system/guix-daemon.service <<EOF_PATCH
 --- guix-daemon.service
 +++ guix-daemon.service
