@@ -24,10 +24,10 @@ readonly SET_HOME_BINARY_PATH="export PATH=\$HOME/bin:\$HOME/sbin\${PATH:+:}\$PA
 eval "${SET_HOME_BINARY_PATH}" && echo "${SET_HOME_BINARY_PATH}" >>~/.bashrc
 
 # install UTF-8 locale and force initial build of Guix
-guix install glibc-utf8-locales
+guix package --manifest=/tmp/manifest/locales.scm
 
-# the profile does not look to be available until after the installation of
-# glibc-utf8-locales, the first installed package, and the 'eval' will result
+# the profile does not look to be available until after the installation of the
+# custom UTF-8 locales, the first installed package, and the 'eval' will result
 # in an error if the source file is not present
 readonly SOURCE_GUIX_PROFILE="source \${GUIX_PROFILE}/etc/profile"
 eval "${SOURCE_GUIX_PROFILE}" && echo "${SOURCE_GUIX_PROFILE}" >>~/.bashrc

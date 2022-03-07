@@ -7,11 +7,5 @@
    #:locales (list "en_US")
    #:name "custom-utf8-locales"))
 
-(concatenate-manifests
- (list
-  (specifications->manifest
-   '("guix"
-     "guile"
-     "guile-ssh"))
-  (packages->manifest
-   `(,custom-utf8-locales))))
+(packages->manifest
+ `(,custom-utf8-locales))
