@@ -122,7 +122,7 @@ EOF_PATCH
   umount /tmp
 fi
 
-systemctl start guix-daemon && systemctl enable guix-daemon
+systemctl enable --now guix-daemon
 
 # create user for local software builds
 useradd -G wheel build
