@@ -10,8 +10,8 @@
 (concatenate-manifests
  (list
   (specifications->manifest
-   '("guix"
-     "guile"
-     "guile-ssh"))
+   '("guile"
+     "guile-ssh"
+     "guix"))
   (packages->manifest
    `(,custom-utf8-locales))))

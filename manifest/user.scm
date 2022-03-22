@@ -44,6 +44,7 @@
       "socat"
       "tar"
       "time"
+      "tree"
       "zstd")))
   (packages->manifest
    `(,custom-utf8-locales))))
