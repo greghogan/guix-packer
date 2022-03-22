@@ -38,3 +38,8 @@ echo "# configure Guix to secondarily search system documentation" >>~/.bashrc
 echo "export INFOPATH=\$INFOPATH\${INFOPATH:+:}/usr/share/info" >>~/.bashrc
 echo "export MANPATH=\$MANPATH\${MANPATH:+:}/usr/share/man" >>~/.bashrc
 echo "export PKG_CONFIG_PATH=\$PKG_CONFIG_PATH\${PKG_CONFIG_PATH:+:}/usr/share/pkgconfig" >>~/.bashrc
+
+# configure gdb for any installed Guix debug outputs
+cat <<EOF >~/.gdbinit
+set debug-file-directory ~/.guix-profile/lib/debug
+EOF
