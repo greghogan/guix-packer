@@ -41,6 +41,7 @@
       "pdsh"
       "pkg-config"
       "poke"
+      "recutils"
       "socat"
       "tar"
       "time"
