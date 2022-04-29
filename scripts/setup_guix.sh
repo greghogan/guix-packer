@@ -56,7 +56,7 @@ ${CURRENT_GUIX}/bin/guix archive --authorize < /etc/guix/signing-key.pub
 cat <<EOF > /etc/guix/machines.scm.template
 (list (build-machine
         (name "<host name>")
-        (systems (list "x86_64-linux"))
+        (systems (list "i686-linux" "x86_64-linux"))
         (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub | sed s/\ $//)")
         (user "offload")
         (parallel-builds 3)
