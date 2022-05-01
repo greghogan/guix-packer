@@ -4,9 +4,7 @@
 set -efo pipefail
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
-AWS_EFA_INSTALLER_VERSION=1.14.1
-
-ARCH=$(uname -m)
+AWS_EFA_INSTALLER_VERSION=1.15.1
 
 function WGET() { until wget --tries=1 --timeout=10 --progress=dot:mega "$1" -O "$2"; do rm -f "$2"; done }
 
@@ -115,11 +113,10 @@ cp /tmp/manifest/user.scm manifest.scm
 # manifest can be installed with:
 # guix package --manifest=manifest.scm && source ~/.bashrc
 
-# install AWS EFA (Elastic Fabric Adaptor)
-# this also installs Amazon's OpenMPI build among other installed packages
-# note: no current support for aarch64 instances:
+# install AWS EFA (Elastic Fabric Adaptor); for supported instance types and AMIs see
 #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
-if [ "${ARCH}" = "x86_64" ]; then
+#   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-amis
+if "${INSTALL_EFA}" ; then
   WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
   tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
   cd aws-efa-installer || exit
