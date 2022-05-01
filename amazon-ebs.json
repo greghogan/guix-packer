@@ -146,7 +146,8 @@
       "type": "shell",
       "environment_vars": [
         "AWS_ACCESS_KEY_ID={{user `aws_access_key_id`}}",
-        "AWS_SECRET_ACCESS_KEY={{user `aws_secret_access_key`}}"
+        "AWS_SECRET_ACCESS_KEY={{user `aws_secret_access_key`}}",
+        "INSTALL_EFA={{user `install_efa`}}"
       ],
       "script": "scripts/setup_user.sh"
     },

@@ -4,5 +4,6 @@
   "image_name": "amazon-linux2",
   "ami_name": "amzn2-ami-hvm-2.0.20210813.1-x86_64-gp2",
   "ami_owners": "137112412989",
-  "ssh_username": "ec2-user"
+  "ssh_username": "ec2-user",
+  "install_efa": "true"
 }
