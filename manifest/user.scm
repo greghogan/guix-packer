@@ -17,7 +17,8 @@
       ((or "x86_64-linux" "i686-linux")
        `("cpuid"
          "diffoscope"
-         "fio"))
+         "fio"
+         "ripgrep"))
         (_ `()))
     '("binutils"
       "coreutils"
