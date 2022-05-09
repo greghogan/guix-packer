@@ -18,7 +18,8 @@
        `("cpuid"
          "diffoscope"
          "fio"
-         "ripgrep"))
+         "ripgrep"
+         "tealdeer"))
         (_ `()))
     '("binutils"
       "coreutils"
@@ -47,6 +48,8 @@
       "tar"
       "time"
       "tree"
+      "util-linux"
+      "vmtouch"
       "zstd")))
   (packages->manifest
    `(,custom-utf8-locales))))
