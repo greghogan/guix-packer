@@ -44,6 +44,7 @@
       "pdsh"
       "pkg-config"
       "poke"
+      "pv"
       "recutils"
       "socat"
       "sshpass"
