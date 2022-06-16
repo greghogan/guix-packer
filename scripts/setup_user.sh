@@ -38,11 +38,46 @@ EOF
 
 
 # configure the shell
-cat <<EOF >> ~/.bash_profile
+cat <<"EOF" >> ~/.bash_profile
 
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
+
+function guix_compile_guix() {( set -e
+        # use `git stash` to preserve changes while cleaning
+        DIRTY=$(git status --porcelain)
+
+        [ -n "${DIRTY}" ] && echo -n "stashing ... " && git stash --quiet --include-untracked
+        echo -n "cleaning ... " && git clean --quiet -fdx
+        [ -n "${DIRTY}" ] && echo -n "popping ... " && git stash pop --quiet >/dev/null
+        echo "done"
+
+        ./bootstrap
+        ./configure --localstatedir=/var
+        make -j`nproc`
+)}
+export -f guix_compile_guix
+
+# https://guix.gnu.org/manual/en/html_node/Binary-Installation.html
+function guix_make_system_binary() {
+	make guix-binary.${1:-`uname -m`-linux}.tar.xz
+}
+export -f guix_make_system_binary
+
+# https://guix.gnu.org/manual/en/html_node/Running-Guix-Before-It-Is-Installed.html
+function guix_run_guix_daemon() {
+	sudo -E ./pre-inst-env guix-daemon --build-users-group=guixbuild --max-jobs=${1:-1}
+}
+export -f guix_run_guix_daemon
+
+function guix_build_dependents() {
+	DEPENDENTS_STRING=$(./pre-inst-env guix refresh -l "$@")
+	echo ${DEPENDENTS_STRING}
+	DEPENDENTS=$(echo ${DEPENDENTS_STRING} | cut -d: -f2)
+	./pre-inst-env guix build --keep-going --verbosity=1 ${DEPENDENTS}
+}
+export -f guix_build_dependents
 EOF
 
 # configure screen
