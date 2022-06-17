@@ -28,6 +28,7 @@
       "diffutils"
       "dos2unix"
       "git"
+      "git:send-email"
       "htop"
       "iftop"
       "info-reader"
@@ -54,6 +55,15 @@
       "tree"
       "util-linux"
       "vmtouch"
-      "zstd")))
+      "zstd"
+
+      ;; Guix setup
+      "emacs"
+      "emacs-geiser"
+      "emacs-magit"
+      "emacs-paredit"
+      "emacs-yasnippet"
+      "guile"
+      "vim")))
   (packages->manifest
    `(,custom-utf8-locales))))
