@@ -19,7 +19,8 @@
          "diffoscope"
          "fio"
          "ripgrep"
-         "tealdeer"))
+         "tealdeer"
+         "turbostat"))
         (_ `()))
     '("binutils"
       "coreutils"
