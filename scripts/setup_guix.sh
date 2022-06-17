@@ -71,8 +71,10 @@ cat <<EOF > /etc/guix/machines.scm.template
         (systems (list ${SYSTEMS}))
         (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub | sed s/\ $//)")
         (user "offload")
+        (overload-threshold 0.9)
         (parallel-builds 3)
-        (compression "none")))
+        (compression "none")
+        (speed 1.0)))
 EOF
 
 ln -s /etc/guix/ /usr/local/etc/guix
