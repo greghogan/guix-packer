@@ -53,10 +53,22 @@ ${CURRENT_GUIX}/bin/guix archive --authorize < /etc/guix/signing-key.pub
 
 # create template for enabling Guix offload builds; to use, the host name and
 # user name must be added and the file renamed by removing the ".template" extension
+case "${ARCH}" in
+  aarch64)
+    SYSTEMS='"armhf-linux" "aarch64-linux" "i686-linux" "x86_64-linux"'
+    ;;
+  x86_64)
+    SYSTEMS='"aarch64-linux" "i686-linux" "x86_64-linux"'
+    ;;
+  *)
+    echo "unsupported ARCH=${ARCH}"
+    exit 1
+esac
+
 cat <<EOF > /etc/guix/machines.scm.template
 (list (build-machine
         (name "<host name>")
-        (systems (list "i686-linux" "x86_64-linux"))
+        (systems (list ${SYSTEMS}))
         (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub | sed s/\ $//)")
         (user "offload")
         (parallel-builds 3)
