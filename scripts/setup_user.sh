@@ -78,6 +78,19 @@ function guix_build_dependents() {
 	./pre-inst-env guix build --keep-going --verbosity=1 ${DEPENDENTS}
 }
 export -f guix_build_dependents
+
+function guix_graph_path() {
+	for (( i=1; i<=$#; i++ )) ; do
+		for (( j=i+1; j<=$#; j++ )) ; do
+			I_TO_J=`guix graph --path ${!i} ${!j} 2>&1`
+			[ $? -eq 0 ] && echo -e ">> ${!i} depends on ${!j}\n${I_TO_J}"
+
+			J_TO_I=`guix graph --path ${!j} ${!i} 2>&1`
+			[ $? -eq 0 ] && echo -e ">> ${!j} depends on ${!i}\n${J_TO_I}"
+		done
+	done
+}
+export -f guix_graph_path
 EOF
 
 # configure screen
