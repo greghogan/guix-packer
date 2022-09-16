@@ -102,6 +102,25 @@ function guix_unrebased_from_upstream() {
 	} | less --quit-if-one-screen
 }
 export -f guix_unrebased_from_upstream
+
+function guix_rebase_worktree() {
+	for WORKTREE in "$@" ; do
+		echo ${WORKTREE}
+		pushd ${WORKTREE} > /dev/null
+		for BRANCH in "core-updates" "staging" "master" ; do
+			if [[ ${WORKTREE} =~ ${BRANCH}* ]] ; then
+				git stash -m "rebase upstream/${BRANCH} `date --utc --iso-8601=seconds`"
+				git rebase upstream/${BRANCH}
+				git stash pop
+				[ -f ./configure ] || ./bootstrap
+				[ -f ./Makefile ] || ./configure --localstatedir=/var
+				make -j`nproc`
+			fi
+		done
+		popd > /dev/null
+	done
+}
+export -f guix_rebase_worktree
 EOF
 
 # configure screen
