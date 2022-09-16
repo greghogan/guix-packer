@@ -91,6 +91,17 @@ function guix_graph_path() {
 	done
 }
 export -f guix_graph_path
+
+function guix_unrebased_from_upstream() {
+	{
+		for BRANCH in "core-updates" "staging" "master" ; do
+			echo ${BRANCH}
+			git rev-list --oneline --ancestry-path ${BRANCH}..upstream/${BRANCH}
+			echo
+		done
+	} | less --quit-if-one-screen
+}
+export -f guix_unrebased_from_upstream
 EOF
 
 # configure screen
