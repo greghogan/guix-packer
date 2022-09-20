@@ -70,6 +70,11 @@ function guix_run_guix_daemon() {
 }
 export -f guix_run_guix_daemon
 
+function guix_environment_guix() {
+	guix environment --container guix --ad-hoc git help2man
+}
+export -f guix_environment_guix
+
 function guix_build_dependents() {
 	local NUM_BUILDS
 
