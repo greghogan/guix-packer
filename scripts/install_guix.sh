@@ -49,3 +49,9 @@ EOF
 cat <<EOF >~/.gdbinit
 set debug-file-directory ~/.guix-profile/lib/debug
 EOF
+
+# configure less as the git pager to better support UTF-8
+cat <<EOF >~/.gitconfig
+[core]
+	pager = LESSCHARSET=utf-8 less
+EOF
