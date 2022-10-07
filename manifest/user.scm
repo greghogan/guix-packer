@@ -23,6 +23,7 @@
          "turbostat"))
         (_ `()))
     '("binutils"
+      "btop"
       "coreutils"
       "curl"
       "diffutils"
