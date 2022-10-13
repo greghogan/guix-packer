@@ -51,6 +51,7 @@
       "poke"
       "pv"
       "recutils"
+      "rsync"
       "sed"
       "socat"
       "sshpass"
