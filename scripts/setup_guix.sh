@@ -134,6 +134,11 @@ EOF_PATCH
   rsync -aHAX /tmp/var/guix/ /var/guix/
 
   umount /tmp
+
+  # use RAM disk on boot
+  cat <<-EOF >> /etc/fstab
+	tmpfs                                         /tmp        tmpfs  rw,mode=1777,size=100%   0 0
+	EOF
 fi
 
 systemctl enable --now guix-daemon
