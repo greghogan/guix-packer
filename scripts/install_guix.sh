@@ -41,6 +41,12 @@ export MANPATH=\$MANPATH\${MANPATH:+:}/usr/share/man
 export PKG_CONFIG_PATH=\$PKG_CONFIG_PATH\${PKG_CONFIG_PATH:+:}/usr/share/pkgconfig
 
 # configure user environment
+export HISTCONTROL=ignorespace:ignoredups
+export HISTIGNORE="history:ls:pwd:"
+export HISTSIZE=9999
+export HISTFILESIZE=9999
+export HISTTIMEFORMAT="[%F %T] "
+
 export PS1=\${PS1:0:1}'\$(if [[ \$? == 0 ]]; then printf "  "; else printf "\xF0\x9F\x94\xA5"; fi) \t (\!) '\${PS1:1}
 export VISUAL=vi
 EOF
