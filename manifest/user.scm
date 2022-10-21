@@ -57,6 +57,7 @@
       "sed"
       "socat"
       "sshpass"
+      "strace"
       "tar"
       "time"
       "tree"
