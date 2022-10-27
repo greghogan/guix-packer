@@ -6,7 +6,6 @@ set -eufo pipefail
 
 # install newer kernel
 amazon-linux-extras install -y \
-  BCC \
   epel \
   kernel-ng
 

@@ -9,6 +9,8 @@ ARCH=$(uname -m)
 # install new packages
 yum install -y \
   amazon-efs-utils \
+  bcc \
+  bpftrace \
   ioping \
   libhugetlbfs-devel \
   libhugetlbfs-utils \
