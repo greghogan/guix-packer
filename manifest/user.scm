@@ -22,7 +22,8 @@
          "tealdeer"
          "turbostat"))
         (_ `()))
-    '("binutils"
+    '("bat"
+      "binutils"
       "btop"
       "coreutils"
       "curl"
