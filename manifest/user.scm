@@ -26,6 +26,7 @@
       "binutils"
       "btop"
       "coreutils"
+      "csvkit"
       "curl"
       "diffutils"
       "dos2unix"
