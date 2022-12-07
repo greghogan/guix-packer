@@ -110,6 +110,15 @@ if ! "${GUIX_SUBSTITUTES}" ; then
  Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
  RemainAfterExit=yes
  StandardOutput=syslog
+@@ -16,7 +16,7 @@ StandardError=syslog
+ # See <https://lists.gnu.org/archive/html/guix-devel/2016-04/msg00608.html>.
+ # Some package builds (for example, go@1.8.1) may require even more than
+ # 1024 tasks.
+-TasksMax=8192
++TasksMax=16384
+ 
+ [Install]
+ WantedBy=multi-user.target
 EOF_PATCH
 
   mount -t tmpfs -o size=100% swap /tmp
