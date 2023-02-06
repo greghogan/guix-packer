@@ -4,6 +4,7 @@
     "aws_secret_access_key": "",
     "guix_version": "1.3.0",
     "guix_commit": "a0178d34",
+    "guix_build": "",
     "guix_substitutes": "false",
     "install_intel_compilers": "false"
   },
@@ -99,20 +100,21 @@
       ]
     },
     {
+      "type": "file",
+      "source": "manifest",
+      "destination": "/tmp/"
+    },
+    {
       "type": "shell",
       "pause_before": "30s",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
       "environment_vars": [
         "GUIX_VERSION={{user `guix_version`}}",
         "GUIX_COMMIT={{user `guix_commit`}}",
+        "GUIX_BUILD={{user `guix_build`}}",
         "GUIX_SUBSTITUTES={{user `guix_substitutes`}}"
       ],
       "script": "scripts/setup_guix.sh"
-    },
-    {
-      "type": "file",
-      "source": "manifest",
-      "destination": "/tmp/"
     },
     {
       "type": "shell",

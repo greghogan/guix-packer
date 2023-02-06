@@ -10,25 +10,35 @@ CURRENT_GUIX=/var/guix/profiles/per-user/root/current-guix
 function RETRY() { while ! "$@"; do echo "Retrying '$*' in 5 seconds" ; sleep 5; done }
 function WGET() { wget --progress=dot:mega "$@"; }
 
-# download Guix package and signature
-WGET https://ftp.gnu.org/gnu/guix/guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
-WGET https://ftp.gnu.org/gnu/guix/guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz.sig
+GUIX_PACKAGE=guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
 
-# verify signature for download
-while
-  # key fetch from https://guix.gnu.org/manual/en/html_node/Binary-Installation.html
-  timeout 10 sh -c "wget 'https://sv.gnu.org/people/viewgpg.php?user_id=127547' -qO - | gpg --import -"
-  ! gpg --verify guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz.sig
-do
-  echo "Retrying GPG keyserver in 5 seconds"
-  sleep 5
-done
+if [ -f "/tmp/manifest/guix-binary.${ARCH}-linux.tar.xz" ]; then
+  # install from uploaded package
+  cp /tmp/manifest/guix-binary.${ARCH}-linux.tar.xz ${GUIX_PACKAGE}
+elif [ -n "${GUIX_BUILD}" ] ; then
+  # install from 'nightly' build
+  WGET https://ci.guix.gnu.org/download/${GUIX_BUILD} -O ${GUIX_PACKAGE}
+else
+  # download Guix package and signature
+  WGET https://ftp.gnu.org/gnu/guix/${GUIX_PACKAGE}
+  WGET https://ftp.gnu.org/gnu/guix/${GUIX_PACKAGE}.sig
 
-rm -f guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz.sig
+  # verify signature for download
+  while
+    # key fetch from https://guix.gnu.org/manual/en/html_node/Binary-Installation.html
+    timeout 10 sh -c "wget 'https://sv.gnu.org/people/viewgpg.php?user_id=127547' -qO - | gpg --import -"
+    ! gpg --verify guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz.sig
+  do
+    echo "Retrying GPG keyserver in 5 seconds"
+    sleep 5
+  done
+
+  rm -f ${GUIX_PACKAGE}.sig
+fi
 
 # unpack and install
-tar -C / --warning=no-timestamp -xf guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
-rm -f guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
+tar -C / --warning=no-timestamp -xf ${GUIX_PACKAGE}
+rm -f ${GUIX_PACKAGE}
 
 # create the group and user accounts for build users
 groupadd --system guixbuild
