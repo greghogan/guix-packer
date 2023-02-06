@@ -134,14 +134,6 @@
     },
     {
       "type": "shell",
-      "execute_command": "sudo -i -u build sh -c '{{ .Vars }} {{ .Path }}'",
-      "environment_vars": [
-        "GUIX_COMMIT={{user `guix_commit`}}"
-      ],
-      "script": "scripts/install_guix.sh"
-    },
-    {
-      "type": "shell",
       "execute_command": "sudo -i -u offload sh -c '{{ .Vars }} {{ .Path }}'",
       "environment_vars": [
         "GUIX_COMMIT={{user `guix_commit`}}"
@@ -156,11 +148,6 @@
         "INSTALL_EFA={{user `install_efa`}}"
       ],
       "script": "scripts/setup_user.sh"
-    },
-    {
-      "type": "shell",
-      "execute_command": "sudo -u build -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "script": "scripts/setup_build.sh"
     },
     {
       "type": "shell",
