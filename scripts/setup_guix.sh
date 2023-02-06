@@ -162,17 +162,6 @@ fi
 
 systemctl enable --now guix-daemon
 
-# create user for local software builds
-useradd -G wheel build
-
-# share SSH configuration to the build user
-sudo cp -a ~/.ssh ~build
-chown -R build: ~build/.ssh
-
-# remove configuration preventing 'root' login
-sed -i 's/^.*ssh-rsa/ssh-rsa/' ~build/.ssh/authorized_keys
-
-
 # create user for offload builds as specified above in the machines.scm template
 useradd -G wheel offload
 
