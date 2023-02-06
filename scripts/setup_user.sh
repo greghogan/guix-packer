@@ -101,7 +101,7 @@ function guix_unrebased_from_upstream() {
 	{
 		for BRANCH in "core-updates" "staging" "master" ; do
 			echo ${BRANCH}
-			git rev-list --oneline --ancestry-path ${BRANCH}..upstream/${BRANCH}
+			git rev-list --oneline ${BRANCH}..upstream/${BRANCH}
 			echo
 		done
 	} | less --quit-if-one-screen
@@ -137,6 +137,9 @@ termcapinfo xterm ti@:te@
 
 # This line makes Detach and Re-attach without losing the regions/windows layout
 layout save default
+
+# Increase the default scrollback
+defscrollback 10000
 EOF
 
 # configure htop via bash_profile conditional on the number of runtime processors
