@@ -4,7 +4,8 @@
     "aws_secret_access_key": "",
     "guix_version": "1.3.0",
     "guix_commit": "a0178d34",
-    "guix_substitutes": "false"
+    "guix_substitutes": "false",
+    "install_intel_compilers": "false"
   },
   "sensitive-variables": ["aws_access_key_id", "aws_secret_access_key"],
   "builders": [
@@ -85,6 +86,9 @@
       "type": "shell",
       "pause_before": "30s",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "INSTALL_INTEL_COMPILERS={{user `install_intel_compilers`}}"
+      ],
       "script": "{{user `image_name`}}/post_reboot.sh"
     },
     {

@@ -34,7 +34,22 @@ yum install -y java-17-amazon-corretto-headless
 
 # install Intel ICX (cpp) and ICC (cpp-classic) compilers
 if [ "${ARCH}" = "x86_64" ]; then
-  yum install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+  cat <<EOF > /etc/yum.repos.d/intel.repo
+[oneAPI]
+name=Intel(R) oneAPI repository
+baseurl=https://yum.repos.intel.com/oneapi
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+EOF
+
+  # install the repository GPG keys
+  yum update -y
+
+  if [ "${INSTALL_INTEL_COMPILERS}" = "true" ]; then
+    yum install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+  fi
 
   # install Packer
   yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
