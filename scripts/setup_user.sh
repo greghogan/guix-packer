@@ -194,11 +194,6 @@ delay=15
 EOF_HTOPRC
 EOF_BASH_PROFILE
 
-# system utility packages
-cp /tmp/manifest/user.scm manifest.scm
-# manifest can be installed with:
-# guix package --manifest=manifest.scm && source ~/.bashrc
-
 # install AWS EFA (Elastic Fabric Adaptor); for supported instance types and AMIs see
 #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
 #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-amis
