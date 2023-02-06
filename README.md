@@ -36,8 +36,6 @@ $ aws ec2 describe-images [...] | jq -r '.Images[] | "\(.OwnerId)\t\(.Name)"' | 
 
 | productID | OS |
 | ----------- | ----------- |
-| b7ee8a69-ee97-4a49-9e68-afaee216db2e | CentOS 7 |
-| 471d022d-974f-4f9c-8e39-b00d9b583833 | CentOS 8 |
 | 3b73ef49-208f-47e1-8a6e-4ae768d8a333 | Ubuntu 18.04 LTS |
 | aced0818-eef1-427a-9e04-8ba38bada306 | Ubuntu 20.04 LTS |
 | 9b889f11-a864-4343-9340-1b2042b8cd6c | Ubuntu 21.04 |
