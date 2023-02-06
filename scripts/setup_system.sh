@@ -51,10 +51,6 @@ format_and_mount() {
 }
 
 # ephemeral disks are symlinked xvda to nvme0n1, ...
-#for id in {a..z}; do
-#    format_and_mount xvd\${id} &
-#done
-
 for id in {0..31}; do
     format_and_mount nvme\${id}n1 "-E nodiscard" &
 done

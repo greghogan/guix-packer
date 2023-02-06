@@ -79,7 +79,7 @@ cat <<EOF > /etc/guix/machines.scm.template
 (list (build-machine
         (name "<host name>")
         (systems (list ${SYSTEMS}))
-        (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub | sed s/\ $//)")
+        (host-key "$(cat /etc/ssh/ssh_host_ed25519_key.pub | cut -d' ' -f1-2)")
         (user "offload")
         (overload-threshold 0.9)
         (parallel-builds 3)
