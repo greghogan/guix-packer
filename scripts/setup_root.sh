@@ -9,9 +9,11 @@ sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin without-password/' /etc/ssh/ssh
 sed -i 's/^PasswordAuthentication yes$/PasswordAuthentication no/' /etc/ssh/sshd_config
 systemctl restart sshd.service
 
+
 # generate and authorize an SSH public key, shared by all nodes in the cluster
 ssh-keygen -N "" -t rsa -f ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
 
 # enable the sharing of multiple sessions over a single network connection
 # with ControlMaster and ControlPath

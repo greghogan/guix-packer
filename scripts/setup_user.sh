@@ -128,6 +128,7 @@ function guix_rebase_worktree() {
 export -f guix_rebase_worktree
 EOF
 
+
 # configure screen
 cat <<EOF >> ~/.screenrc
 # See the Screen FAQ,
@@ -141,6 +142,7 @@ layout save default
 # Increase the default scrollback
 defscrollback 10000
 EOF
+
 
 # configure htop via bash_profile conditional on the number of runtime processors
 mkdir -p ~/.config/htop
@@ -193,6 +195,7 @@ delay=15
 \${CPU_METERS}
 EOF_HTOPRC
 EOF_BASH_PROFILE
+
 
 # install AWS EFA (Elastic Fabric Adaptor); for supported instance types and AMIs see
 #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types

@@ -6,7 +6,8 @@
     "guix_commit": "8e2f32ce",
     "guix_build": "",
     "guix_substitutes": "false",
-    "install_intel_compilers": "false"
+    "install_intel_compilers": "false",
+    "install_emulation_binaries": "false"
   },
   "sensitive-variables": ["aws_access_key_id", "aws_secret_access_key"],
   "builders": [
@@ -152,12 +153,18 @@
     {
       "type": "shell",
       "execute_command": "sudo -u offload -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "INSTALL_EMULATION_BINARIES={{user `install_emulation_binaries`}}"
+      ],
       "script": "scripts/setup_offload.sh"
     },
     {
       "type": "shell",
       "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "script": "scripts/cleanup.sh"
+      "environment_vars": [
+        "INSTALL_EMULATION_BINARIES={{user `install_emulation_binaries`}}"
+      ],
+      "script": "scripts/finish.sh"
     }
   ]
 }
