@@ -85,8 +85,17 @@ patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/syste
 -    --build-users-group=guixbuild --discover=no
 +    --build-users-group=guixbuild --discover=no \${EXEC_START}
  Environment='GUIX_LOCPATH=/var/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
- RemainAfterExit=yes
  StandardOutput=syslog
+ StandardError=syslog
+@@ -22,7 +22,7 @@
+ # See <https://lists.gnu.org/archive/html/guix-devel/2016-04/msg00608.html>.
+ # Some package builds (for example, go@1.8.1) may require even more than
+ # 1024 tasks.
+-TasksMax=8192
++TasksMax=16384
+ 
+ [Install]
+ WantedBy=multi-user.target
 EOF_PATCH
 systemctl daemon-reload && systemctl restart guix-daemon
 EOF
