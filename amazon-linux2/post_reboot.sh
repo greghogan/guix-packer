@@ -56,10 +56,6 @@ EOF
   yum -y install packer
 fi
 
-
-# install qemu targets for user mode emulation
-yum install -y qemu-user-static
-
 # register emulation binaries using the command from the qemu-binfmt-conf script as called by register.sh
 #   https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
 #   https://github.com/multiarch/qemu-user-static/blob/master/containers/latest/register.sh
@@ -68,13 +64,13 @@ case "${ARCH}" in
     cpu=x86_64
     magic='\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00'
     mask='\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
-    echo ":qemu-${cpu}:M::${magic}:${mask}:/usr/bin/qemu-${cpu}-static:" > /proc/sys/fs/binfmt_misc/register
+    echo ":qemu-${cpu}:M::${magic}:${mask}:/var/guix/profiles/per-user/offload/guix-profile/bin/qemu-${cpu}:" > /proc/sys/fs/binfmt_misc/register
     ;;
   x86_64)
     cpu=aarch64
     magic='\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00'
     mask='\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
-    echo ":qemu-${cpu}:M::${magic}:${mask}:/usr/bin/qemu-${cpu}-static:" > /proc/sys/fs/binfmt_misc/register
+    echo ":qemu-${cpu}:M::${magic}:${mask}:/var/guix/profiles/per-user/offload/guix-profile/bin/qemu-${cpu}:" > /proc/sys/fs/binfmt_misc/register
     ;;
   *)
     echo "unsupported ARCH=${ARCH}"
