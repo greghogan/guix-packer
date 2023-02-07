@@ -2,8 +2,8 @@
   "variables": {
     "aws_access_key_id": "",
     "aws_secret_access_key": "",
-    "guix_version": "1.3.0",
-    "guix_commit": "a0178d34",
+    "guix_version": "1.4.0",
+    "guix_commit": "8e2f32ce",
     "guix_build": "",
     "guix_substitutes": "false",
     "install_intel_compilers": "false"
