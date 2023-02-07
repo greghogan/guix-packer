@@ -12,6 +12,7 @@
   (specifications->manifest
    '("guile"
      "guile-ssh"
-     "guix"))
+     "guix"
+     "qemu:static"))
   (packages->manifest
    `(,custom-utf8-locales))))
