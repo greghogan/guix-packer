@@ -1,0 +1,9 @@
+{
+  "arch": "x86_64",
+  "instance_type": "r6i",
+  "image_name": "amazon-linux2022",
+  "ami_name": "al2022-ami-2022.0.20230118.3-kernel-5.15-x86_64",
+  "ami_owners": "137112412989",
+  "ssh_username": "ec2-user",
+  "install_efa": "false"
+}
