@@ -1,7 +1,7 @@
 Build an image for remote development. Packer documentation is at (https://packer.io).
 
 For example, to build against an Amazon Linux 2 AMI execute:
-$ packer build -var-file amazon-linux2/vars.x86_64.json amazon-ebs.json | tee packer.log
+$ packer build -var-file amazon-linux2022/vars.x86_64.json amazon-ebs.json | tee packer.log
 
 To enable logging set the environment variable PACKER_LOG:
 $ PACKER_LOG=1 packer build [...] | tee packer.log

@@ -89,12 +89,14 @@ EOF
 
 ln -s /etc/guix/ /usr/local/etc/guix
 
-# prevent cloud-init from changing ssh host keys on new instances
+# [AL2] prevent cloud-init from changing ssh host keys on new instances
 sed -i 's/^ssh_deletekeys:   true$/ssh_deletekeys:   false/' /etc/cloud/cloud.cfg
 
-# allow members of the wheel to sudo without entering a password
-sed -i 's/^%wheel\tALL=(ALL)\tALL$/# %wheel\tALL=(ALL)\tALL/' /etc/sudoers
-sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL$/%wheel\tALL=(ALL)\tNOPASSWD: ALL/' /etc/sudoers
+# [AL2022] the Guix ssh binary from the openssh package does not have support for
+# GSS-API and exits with a configuration error
+if [ -f "/etc/crypto-policies/back-ends/openssh.config" ]; then
+  sed -i 's/^GSSAPIKexAlgorithms/#GSSAPIKexAlgorithms/' /etc/crypto-policies/back-ends/openssh.config
+fi
 
 # run the daemon, and set it to automatically start on boot;
 # overwrite potential (blank) patched file from setup_system.sh
@@ -158,6 +160,9 @@ EOF_PATCH
   cat <<-EOF >> /etc/fstab
 	tmpfs                                         /tmp        tmpfs  rw,mode=1777,size=100%   0 0
 	EOF
+
+  # [AL2022] root fileystem is mounted read-only unless tmp.mount is unmasked
+  systemctl unmask tmp.mount
 fi
 
 systemctl enable --now guix-daemon

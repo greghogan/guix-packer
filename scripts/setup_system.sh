@@ -6,19 +6,17 @@ set -eufo pipefail
 
 # enable and set PAM limits
 cat <<EOF >> /etc/pam.d/common-session
-session required pam_limits.so
+session    required     pam_limits.so
 EOF
 
-cat <<EOF >> /etc/security/limits.conf
-soft nofile 1048576
-hard nofile 1048576
-soft core unlimited
-hard core unlimited
+cat <<EOF > /etc/security/limits.d/00-custom.conf
+* soft nofile 1048576
+* hard nofile 1048576
 EOF
 
 # mount attached volumes on startup
-chmod +x /etc/rc.local
-cat <<EOF >> /etc/rc.local
+cat <<EOF >> /etc/rc.d/rc.local
+#!/bin/sh
 
 # remove existing volume directories
 # run from root and silence output
@@ -36,17 +34,16 @@ format_and_mount() {
         blockdev --setra 512 /dev/\${disk}
         echo 1024 > /sys/block/\${disk}/queue/nr_requests
 
-        # attempt to format disk
-        /sbin/mkfs.ext4 -m 0 \${mount_options} /dev/\${disk}
-
-        # mount if format successful
-        if [ \$? -eq 0 ]; then
-            mkdir -p /volumes/\${disk}
-            mount -o init_itable=0 /dev/\${disk} /volumes/\${disk}
-
-            mkdir -p /volumes/\${disk}/tmp
-            chmod 777 /volumes/\${disk}/tmp
+        if [ -z \$(lsblk -no FSTYPE /dev/\$disk) ]; then
+            # attempt to format disk
+            /sbin/mkfs.ext4 -m 0 \${mount_options} /dev/\${disk}
         fi
+
+        mkdir -p /volumes/\${disk}
+        mount -o init_itable=0 /dev/\${disk} /volumes/\${disk}
+
+        mkdir -p /volumes/\${disk}/tmp
+        chmod 777 /volumes/\${disk}/tmp
     fi
 }
 
@@ -98,4 +95,7 @@ patch -d/ -p0 /etc/systemd/system/guix-daemon.service.orig -o /etc/systemd/syste
  WantedBy=multi-user.target
 EOF_PATCH
 systemctl daemon-reload && systemctl restart guix-daemon
+
+touch /var/lock/subsys/local
 EOF
+chmod +x /etc/rc.d/rc.local
