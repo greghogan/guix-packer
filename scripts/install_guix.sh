@@ -24,7 +24,7 @@ readonly SET_HOME_BINARY_PATH="export PATH=\$HOME/bin:\$HOME/sbin\${PATH:+:}\$PA
 eval "${SET_HOME_BINARY_PATH}" && echo "${SET_HOME_BINARY_PATH}" >>~/.bashrc
 
 # install UTF-8 locale and force initial build of Guix
-guix package --manifest=/tmp/manifest/locales.scm
+guix package --manifest=/transfer/locales.scm
 
 # the profile does not look to be available until after the installation of the
 # custom UTF-8 locales, the first installed package, and the 'eval' will result

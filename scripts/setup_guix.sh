@@ -12,9 +12,9 @@ function WGET() { wget --progress=dot:mega "$@"; }
 
 GUIX_PACKAGE=guix-binary-${GUIX_VERSION}.${ARCH}-linux.tar.xz
 
-if [ -f "/tmp/manifest/guix-binary.${ARCH}-linux.tar.xz" ]; then
+if [ -f "/transfer/guix-binary.${ARCH}-linux.tar.xz" ]; then
   # install from uploaded package
-  cp /tmp/manifest/guix-binary.${ARCH}-linux.tar.xz ${GUIX_PACKAGE}
+  cp /transfer/guix-binary.${ARCH}-linux.tar.xz ${GUIX_PACKAGE}
 elif [ -n "${GUIX_BUILD}" ] ; then
   # install from 'nightly' build
   WGET https://ci.guix.gnu.org/download/${GUIX_BUILD} -O ${GUIX_PACKAGE}

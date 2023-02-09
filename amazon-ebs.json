@@ -102,8 +102,13 @@
     },
     {
       "type": "file",
-      "source": "manifest",
-      "destination": "/tmp/"
+      "source": "transfer",
+      "destination": "/tmp"
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "inline": ["mv /tmp/transfer /"]
     },
     {
       "type": "shell",
