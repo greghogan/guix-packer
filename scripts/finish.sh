@@ -38,5 +38,5 @@ fi
 
 
 # delete temporary files and clear command history
-rm -rf /tmp/*
+rm -rf /tmp/* /transfer
 > ~/.bash_history && history -c

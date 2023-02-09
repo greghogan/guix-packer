@@ -4,7 +4,7 @@
 set -efo pipefail
 
 # packages which must be installed on the offload host
-cp /tmp/manifest/offload.scm manifest.scm
+cp /transfer/offload.scm manifest.scm
 
 # remove emulation binaries from manifest if not requested
 if ! "$INSTALL_EMULATION_BINARIES" ; then
