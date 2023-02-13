@@ -1,12 +1,8 @@
 #!/bin/bash -x
 
-# exit immediately on failure (even when piping) and disable filename expansion (globbing)
-set -efo pipefail
-
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
-AWS_EFA_INSTALLER_VERSION=1.15.1
-
-function WGET() { until wget --tries=1 --timeout=10 --progress=dot:mega "$1" -O "$2"; do rm -f "$2"; done }
+# exit immediately on failure (even when piping), treat unset variables and
+# parameters as an error, and disable filename expansion (globbing)
+set -eufo pipefail
 
 # share SSH configuration from root user
 sudo cp -a /root/.ssh ~
@@ -195,19 +191,3 @@ delay=15
 \${CPU_METERS}
 EOF_HTOPRC
 EOF_BASH_PROFILE
-
-
-# install AWS EFA (Elastic Fabric Adaptor); for supported instance types and AMIs see
-#   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
-#   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-amis
-if "${INSTALL_EFA}" ; then
-  WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
-  tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
-  cd aws-efa-installer || exit
-  sudo ./efa_installer.sh -y || exit
-  cd .. || exit
-  rm -rf aws-efa-installer
-fi
-
-# clear command history
-> ~/.bash_history && history -c

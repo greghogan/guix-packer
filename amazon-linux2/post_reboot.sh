@@ -4,6 +4,11 @@
 # parameters as an error, and disable filename expansion (globbing)
 set -eufo pipefail
 
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-start.html
+AWS_EFA_INSTALLER_VERSION=1.21.0
+
+function WGET() { until wget --tries=1 --timeout=10 --progress=dot:mega "$1" -O "$2"; do rm -f "$2"; done }
+
 ARCH=$(uname -m)
 
 # install new packages
@@ -54,4 +59,14 @@ EOF
   # install Packer
   yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
   yum -y install packer
+
+  # install AWS EFA (Elastic Fabric Adaptor); for supported instance types and AMIs see
+  #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-instance-types
+  #   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-amis
+  WGET https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-${AWS_EFA_INSTALLER_VERSION}.tar.gz aws-efa-installer.tar.gz
+  tar xf aws-efa-installer.tar.gz && rm -f aws-efa-installer.tar.gz
+  cd aws-efa-installer || exit
+  ./efa_installer.sh -y || exit
+  cd .. || exit
+  rm -rf aws-efa-installer
 fi
