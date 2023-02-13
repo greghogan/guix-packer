@@ -1,7 +1,8 @@
 #!/bin/bash -x
 
-# exit immediately on failure (even when piping) and disable filename expansion (globbing)
-set -efo pipefail
+# exit immediately on failure (even when piping), treat unset variables and
+# parameters as an error, and disable filename expansion (globbing)
+set -eufo pipefail
 
 # packages which must be installed on the offload host
 cp /transfer/offload.scm manifest.scm
@@ -12,7 +13,7 @@ if ! "$INSTALL_EMULATION_BINARIES" ; then
 fi
 
 # install packages
-guix package --manifest=manifest.scm && source ~/.bashrc
+guix package --manifest=manifest.scm
 
 
 # clear command history
