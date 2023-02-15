@@ -144,7 +144,37 @@ EOF_PATCH
 
   systemctl start guix-daemon
 
-  RETRY /var/guix/profiles/per-user/root/current-guix/bin/guix pull ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}}
+  systemctl stop chronyd
+
+  # ungrafted openssl@1.1.1l contains expired test certificates; however, when
+  # setting back the clock diffutils-boot0-3.8 then fails with a configure
+  # error with "newly created file is older than distributed files" - to resolve
+  # this the clock jumps is set back one year at a time up to a progressively
+  # longer period, before resetting back to the current time
+  YEARS_BACK=0
+  while true ; do
+    YEARS_BACK=$(($YEARS_BACK + 1))
+    for (( YEAR=0; YEAR<=$YEARS_BACK; YEAR++ )) ; do
+      # except for the initial iteration, jump back one year
+      if [[ $YEAR > 0 ]] ; then
+        date --set="-1 years"
+      fi
+
+      if /var/guix/profiles/per-user/root/current-guix/bin/guix pull \
+        --url=http://git.savannah.gnu.org/git/guix.git \
+        ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}} ; then
+          # reset current adjustment and exit loops
+          date --set="+${YEAR} years"
+          break 2
+      fi
+    done
+
+    # reset to current date
+    date --set="+${YEARS_BACK} years"
+    sleep 5
+  done
+
+  systemctl start chronyd
 
   systemctl stop guix-daemon
 
