@@ -140,6 +140,47 @@ defscrollback 10000
 EOF
 
 
+# configure tmux
+cat <<"EOF" >> ~/.tmux.conf
+set-option -g history-limit 100000
+
+# change prefix to Ctrl + Space
+unbind C-Space
+set -g prefix C-Space
+bind C-Space send-prefix
+
+# add binding for vertical split
+bind-key "|" split-window -h -c "#{pane_current_path}"
+bind-key "\\" split-window -fh -c "#{pane_current_path}"
+
+# add binding for horizontal split
+bind-key "-" split-window -v -c "#{pane_current_path}"
+bind-key "_" split-window -fv -c "#{pane_current_path}"
+
+# swap windows
+bind -r "<" swap-window -d -t -1
+bind -r ">" swap-window -d -t +1
+
+# preserve path when creating new panes
+bind c new-window -c "#{pane_current_path}"
+
+# reload config file
+bind r source-file ~/.tmux.conf \; display-message "tmux config reloaded"
+
+# replace toggle layout with switch to last window
+bind Space last-window
+
+# switch panes using Alt-arrow without prefix
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+# enable mouse mode
+set -g mouse on
+EOF
+
+
 # configure htop via bash_profile conditional on the number of runtime processors
 mkdir -p ~/.config/htop
 cat <<EOF_BASH_PROFILE >> ~/.bash_profile
