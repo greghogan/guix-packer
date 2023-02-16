@@ -181,6 +181,17 @@ set -g mouse on
 EOF
 
 
+# configure vim
+cat <<"EOF" >> ~/.vimrc
+" include Guix plugins
+let $GUIX_VIMPATH="$GUIX_PROFILE/share/vim/vimfiles/"
+let &rtp=$GUIX_VIMPATH.','.&rtp
+
+" default delay is too unresponsive for gitgutter plugin
+set updatetime=100
+EOF
+
+
 # configure htop via bash_profile conditional on the number of runtime processors
 mkdir -p ~/.config/htop
 cat <<EOF_BASH_PROFILE >> ~/.bash_profile
