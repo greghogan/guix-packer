@@ -17,15 +17,7 @@
       "instance_type": "{{user `instance_type`}}.xlarge",
       "region": "us-east-2",
       "spot_price": "auto",
-      "source_ami_filter": {
-        "filters": {
-          "virtualization-type": "hvm",
-          "name": "{{user `ami_name`}}",
-          "root-device-type": "ebs"
-        },
-        "owners": "{{user `ami_owners`}}",
-        "most_recent": true
-      },
+      "source_ami": "{{user `source_ami`}}",
       "ssh_username": "{{user `ssh_username`}}",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
@@ -47,7 +39,7 @@
       "launch_block_device_mappings": [
         {
           "device_name": "/dev/xvda",
-          "volume_size": 20,
+          "volume_size": 14,
           "volume_type": "gp3",
           "delete_on_termination": true
         }

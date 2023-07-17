@@ -1,30 +1,52 @@
 Build an image for remote development. Packer documentation is at (https://packer.io).
 
 For example, to build against an Amazon Linux 2 AMI execute:
-$ packer build -var-file amazon-linux2022/vars.x86_64.json amazon-ebs.json | tee packer.log
 
-To enable logging set the environment variable PACKER_LOG:
-$ PACKER_LOG=1 packer build [...] | tee packer.log
+```console
+packer build -var-file amazon-linux2023/vars.x86_64.json amazon-ebs.json | tee packer.log
+```
+
+To enable logging with timestamps set the environment variable `PACKER_LOG`:
+
+```console
+PACKER_LOG=1 packer build [...] | tee packer.log
+```
 
 To connect to the build instance enable the debug flag to step through the build process and have
 packer save a copy of the key file and print the instance's public IP address:
-$ packer build -debug -on-error=ask -var-file [...]
+
+```console
+packer build -debug -on-error=ask -var-file [...]
+```
 
 Then connect to the build instance over SSH:
-$ ssh -i <KEY_FILE>.pem <SSH_USERNAME>@<PUBLIC_IP>
+```console
+ssh -i <KEY_FILE>.pem <SSH_USERNAME>@<PUBLIC_IP>
+```
 
 !!! Note that AMIs are region-specific !!!
 
-The base AMI name and owners can be discovered by searching with the awscli tool. If the AMI image
-ID is known (perhaps from the AWS Console) then filter by image-id. For example, for a recent
-Amazon Linux 2 image:
-$ aws ec2 describe-images --filters "Name=image-id,Values=ami-0323c3dd2da7fb37d"
+The base AMI name is stored in the vars file within the distribution directory and can be queried
+from AWS Systems Manager as follows. The available architectures are `arm64` and `x86_64`.
 
-If the AWS Marketplace, the product key can be obtained by searching for and viewing a specific
-instance then clicking "Continue to Subscribe" and selecting the "productId" parameter from the
-URL. For example, a recent CentOS image:
-$ aws ec2 describe-images --owners aws-marketplace --filters "Name=name,Values=*d83d0782-cb94–46d7–8993-f4ce15d1a484*"
+```console
+# arm64 or x86_64
+ARCH=arm64
 
-If the `jq` command is installed then the previous `describe-images` commands can be piped as
-follows to parse the "OwnerID" and "Name" fields":
-$ aws ec2 describe-images [...] | jq -r '.Images[] | "\(.OwnerId)\t\(.Name)"' | sort
+# [list of EC2 regions](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html)
+REGION=us-east-2
+
+# for Amazon Linux 2023 (EOL 2028-03-15)
+IMAGE=al2023-ami-kernel-default-${ARCH}
+
+# for Amazon Linux 2 (EOL 2025-06-30)
+IMAGE=amzn2-ami-hvm-${ARCH}-gp2
+
+# query AMI name
+aws ssm get-parameters --region $REGION --names /aws/service/ami-amazon-linux-latest/$IMAGE --query 'Parameters[0].[Value]' --output text
+```
+
+Notes on building: the images using Guix substitutes can be built with a volume size of at least
+8 GB. The images built with substitutes disabled require a 13 GB volume. The Guix binary can be
+copied to the transfer directory after compilation from the Guix source with the command
+ `make guix-binary.$(uname -m)-linux.tar.xz`.
