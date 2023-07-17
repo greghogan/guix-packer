@@ -39,6 +39,20 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+alias tmux='tmux -u'
+
+alias wordiff='git diff --word-diff=color --word-diff-regex=.'
+
+eval `lesspipe.sh`
+
+export GUIX_BUILD_OPTIONS="--cores=1 --keep-going --max-jobs=$(getconf _NPROCESSORS_ONLN) --verbosity=1"
+
+function silence_offload_status() {
+        # filter logs cluttering stderr with status updates every second
+        "$@" 2> >(grep -v "acquired build slot\|normalized load on machine" >&2)
+}
+export -f silence_offload_status
+
 function guix_compile_guix() {( set -e
         # use `git stash` to preserve changes while cleaning
         DIRTY=$(git status --porcelain)
@@ -67,7 +81,7 @@ function guix_run_guix_daemon() {
 export -f guix_run_guix_daemon
 
 function guix_environment_guix() {
-	guix environment --container guix --ad-hoc git help2man
+	guix environment --container guix --ad-hoc git help2man less
 }
 export -f guix_environment_guix
 
@@ -91,6 +105,11 @@ function guix_build_dependents() {
 }
 export -f guix_build_dependents
 
+function guix_watch_builds() {
+	watch 'find /tmp -maxdepth 1 -name "guix-build-*" -printf "%TH:%TM:%.2TS  %f\n" | sort | cat --number-nonblank'
+}
+export -f guix_watch_builds
+
 function guix_graph_path() {
 	for (( i=1; i<=$#; i++ )) ; do
 		for (( j=i+1; j<=$#; j++ )) ; do
@@ -106,9 +125,10 @@ export -f guix_graph_path
 
 function guix_unrebased_from_upstream() {
 	{
-		for BRANCH in "core-updates" "staging" "master" ; do
+		for BRANCH in master ; do
 			echo ${BRANCH}
-			git rev-list --oneline ${BRANCH}..upstream/${BRANCH}
+			UPSTREAM_BRANCH=upstream/${BRANCH%%-*}
+			git rev-list --oneline ${BRANCH}..${UPSTREAM_BRANCH}
 			echo
 		done
 	} | less --quit-if-one-screen
@@ -119,10 +139,12 @@ function guix_rebase_worktree() {
 	for WORKTREE in "$@" ; do
 		echo ${WORKTREE}
 		pushd ${WORKTREE} > /dev/null
-		for BRANCH in "core-updates" "staging" "master" ; do
+		for BRANCH in master ; do
+			echo ${BRANCH}
+			UPSTREAM_BRANCH=upstream/${BRANCH%%-*}
 			if [[ ${WORKTREE} =~ ${BRANCH}* ]] ; then
-				git stash -m "rebase upstream/${BRANCH} `date --utc --iso-8601=seconds`"
-				git rebase upstream/${BRANCH}
+				git stash -m "rebase ${UPSTREAM_BRANCH} `date --utc --iso-8601=seconds`"
+				git rebase ${UPSTREAM_BRANCH}
 				git stash pop
 				[ -f ./configure ] || ./bootstrap
 				[ -f ./Makefile ] || ./configure --localstatedir=/var
@@ -133,6 +155,43 @@ function guix_rebase_worktree() {
 	done
 }
 export -f guix_rebase_worktree
+EOF
+
+
+# configure emacs
+cat <<EOF >> ~/.emacs
+;; Highlight cursor line
+(global-hl-line-mode +1)
+
+;; Highlight the pair of delimiters under the cursor
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+
+;; Add auto-completion to Geiser
+(ac-config-default)
+(require 'ac-geiser)
+(add-hook 'geiser-mode-hook 'ac-geiser-setup)
+(add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'geiser-repl-mode))
+
+;; Configure Paredit
+(require 'paredit)
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'scheme-mode-hook #'enable-paredit-mode)
+EOF
+
+
+# configure guile
+cat <<EOF >> ~/.guile
+(use-modules
+ (ice-9 colorized)
+ (ice-9 readline))
+
+(activate-colorized)
+
+(activate-readline)
+(readline-set! history-length 10000)
 EOF
 
 
@@ -189,17 +248,97 @@ bind -n M-Down select-pane -D
 
 # enable mouse mode
 set -g mouse on
+
+#
+# plugin configuration
+#
+
+run-shell $GUIX_PROFILE/share/tmux-plugins/resurrect/resurrect.tmux
+set -g @resurrect-strategy-vim 'session'
+set -g @resurrect-strategy-nvim 'session'
+set -g @resurrect-capture-pane-contents 'on'
+
+run-shell $GUIX_PROFILE/share/tmux-plugins/continuum/continuum.tmux
+set -g @continuum-save-interval '5'
 EOF
 
 
 # configure vim
 cat <<"EOF" >> ~/.vimrc
+set encoding=utf-8
+set fileencoding=utf-8
+
 " include Guix plugins
 let $GUIX_VIMPATH="$GUIX_PROFILE/share/vim/vimfiles/"
 let &rtp=$GUIX_VIMPATH.','.&rtp
 
 " default delay is too unresponsive for gitgutter plugin
 set updatetime=100
+
+" clear search with Ctrl+/
+noremap <silent> <c-_> :let @/ = ""<CR>
+
+" trim trailing whitespace with F5
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+
+" reopen the last edited position in files
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" do not auto-indent or auto-comment on paste
+set paste
+set pastetoggle=<F2>
+
+" toggle absolute and relative numbers automatically based on mode
+" see vim-numbertoggle [https://github.com/jeffkreeftmeijer/vim-numbertoggle]
+:set number
+
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+:  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+:augroup END
+
+" open files to linenumber with form <filename>:<line number>
+" copied from file_line.vim [https://www.vim.org/scripts/script.php?script_id=2184]
+function! s:gotoline()
+        let file = bufname("%")
+
+        " :e command calls BufRead even though the file is a new one.
+        " As a workarround Jonas Pfenniger<jonas@pfenniger.name> added an
+        " AutoCmd BufRead, this will test if this file actually exists before
+        " searching for a file and line to goto.
+        if (filereadable(file))
+                return
+        endif
+
+        " Accept file:line:column: or file:line:column and file:line also
+        let names =  matchlist( file, '\(.\{-1,}\):\%(\(\d\+\)\%(:\(\d*\):\?\)\?\)\?$')
+
+        if empty(names)
+                return
+        endif
+
+        let file_name = names[1]
+        let line_num  = names[2] == ''? '0' : names[2]
+        let  col_num  = names[3] == ''? '0' : names[3]
+
+        if filereadable(file_name)
+                let l:bufn = bufnr("%")
+                exec ":bwipeout " l:bufn
+
+                exec "keepalt edit " . file_name
+                exec ":" . line_num
+                exec "normal! " . col_num . '|'
+                if foldlevel(line_num) > 0
+                        exec "normal! zv"
+                endif
+
+                exec "normal! zz"
+        endif
+endfunction
+
+autocmd! BufNewFile *:* nested call s:gotoline()
+autocmd! BufRead *:* nested call s:gotoline()
 EOF
 
 

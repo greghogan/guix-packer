@@ -58,7 +58,7 @@ wait
 # grow maximum number of jobs as the base-2 logarithm of the number of cores;
 # there is no back-off due to CPU load as with offload builds; when substitutes
 # are enabled this supports concurrent downloads
-MAX_JOBS="\$(echo "define log2(x) { if (x == 1) return (1); return 1+log2(x/2); } ; log2(\`nproc\`)" | bc)"
+MAX_JOBS="\$(echo "define log2(x) { if (x == 1) return (0); return 1+log2(x/2); } ; 1+log2(\`nproc\`)" | bc)"
 EXEC_START="--max-silent-time=86400 --max-jobs=\${MAX_JOBS}"
 
 if ! "${GUIX_SUBSTITUTES}" ; then
