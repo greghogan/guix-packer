@@ -64,8 +64,10 @@ cat <<EOF >~/.gdbinit
 set debug-file-directory ~/.guix-profile/lib/debug
 EOF
 
-# configure less as the git pager to better support UTF-8
+# run vim as the editor without plugins and configure less
+# as the git pager to better support UTF-8
 cat <<EOF >~/.gitconfig
 [core]
+	editor = vim --clean
 	pager = LESSCHARSET=utf-8 less
 EOF

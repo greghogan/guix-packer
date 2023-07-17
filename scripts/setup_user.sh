@@ -40,6 +40,20 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+alias tmux='tmux -u'
+
+alias wordiff='git diff --word-diff=color --word-diff-regex=.'
+
+eval `lesspipe.sh`
+
+export GUIX_BUILD_OPTIONS="--keep-going --max-jobs=1 --verbosity=1"
+
+function silence_offload_status() {
+        # filter logs cluttering stderr with status updates every second
+        "$@" 2> >(grep -v "acquired build slot\|normalized load on machine" >&2)
+}
+export -f silence_offload_status
+
 function guix_compile_guix() {( set -e
         # use `git stash` to preserve changes while cleaning
         DIRTY=$(git status --porcelain)
@@ -68,7 +82,7 @@ function guix_run_guix_daemon() {
 export -f guix_run_guix_daemon
 
 function guix_environment_guix() {
-	guix environment --container guix --ad-hoc git help2man
+	guix environment --container guix --ad-hoc git help2man less
 }
 export -f guix_environment_guix
 
@@ -79,6 +93,11 @@ function guix_build_dependents() {
 	./pre-inst-env guix build --keep-going --verbosity=1 ${DEPENDENTS}
 }
 export -f guix_build_dependents
+
+function guix_watch_builds() {
+        watch 'ls -lrt /tmp | grep guix-build- | cat --number'
+}
+export -f guix_watch_builds
 
 function guix_graph_path() {
 	for (( i=1; i<=$#; i++ )) ; do
@@ -95,7 +114,7 @@ export -f guix_graph_path
 
 function guix_unrebased_from_upstream() {
 	{
-		for BRANCH in "core-updates" "staging" "master" ; do
+		for BRANCH in "master" ; do
 			echo ${BRANCH}
 			git rev-list --oneline ${BRANCH}..upstream/${BRANCH}
 			echo
@@ -108,7 +127,7 @@ function guix_rebase_worktree() {
 	for WORKTREE in "$@" ; do
 		echo ${WORKTREE}
 		pushd ${WORKTREE} > /dev/null
-		for BRANCH in "core-updates" "staging" "master" ; do
+		for BRANCH in "master" ; do
 			if [[ ${WORKTREE} =~ ${BRANCH}* ]] ; then
 				git stash -m "rebase upstream/${BRANCH} `date --utc --iso-8601=seconds`"
 				git rebase upstream/${BRANCH}
@@ -122,6 +141,43 @@ function guix_rebase_worktree() {
 	done
 }
 export -f guix_rebase_worktree
+EOF
+
+
+# configure emacs
+cat <<EOF >> ~/.emacs
+;; Highlight cursor line
+(global-hl-line-mode +1)
+
+;; Highlight the pair of delimiters under the cursor
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+
+;; Add auto-completion to Geiser
+(ac-config-default)
+(require 'ac-geiser)
+(add-hook 'geiser-mode-hook 'ac-geiser-setup)
+(add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'geiser-repl-mode))
+
+;; Configure Paredit
+(require 'paredit)
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'scheme-mode-hook #'enable-paredit-mode)
+EOF
+
+
+# configure guile
+cat <<EOF >> ~/.guile
+(use-modules
+ (ice-9 colorized)
+ (ice-9 readline))
+
+(activate-colorized)
+
+(activate-readline)
+(readline-set! history-length 10000)
 EOF
 
 
@@ -178,17 +234,35 @@ bind -n M-Down select-pane -D
 
 # enable mouse mode
 set -g mouse on
+
+#
+# plugin configuration
+#
+
+run-shell $GUIX_PROFILE/share/tmux-plugins/resurrect/resurrect.tmux
+set -g @resurrect-strategy-vim 'session'
+set -g @resurrect-strategy-nvim 'session'
+set -g @resurrect-capture-pane-contents 'on'
+
+run-shell $GUIX_PROFILE/share/tmux-plugins/continuum/continuum.tmux
+set -g @continuum-save-interval '5'
 EOF
 
 
 # configure vim
 cat <<"EOF" >> ~/.vimrc
+set encoding=utf-8
+set fileencoding=utf-8
+
 " include Guix plugins
 let $GUIX_VIMPATH="$GUIX_PROFILE/share/vim/vimfiles/"
 let &rtp=$GUIX_VIMPATH.','.&rtp
 
 " default delay is too unresponsive for gitgutter plugin
 set updatetime=100
+
+" clear search with Ctrl+/
+noremap <silent> <c-_> :let @/ = ""<CR>
 EOF
 
 
