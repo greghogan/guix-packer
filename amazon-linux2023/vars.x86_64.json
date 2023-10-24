@@ -1,7 +1,7 @@
 {
   "arch": "x86_64",
-  "instance_type": "r6i",
+  "instance_type": "r7a",
   "image_name": "amazon-linux2023",
-  "source_ami": "ami-069d73f3235b535bd",
+  "source_ami": "ami-09d9029d9fc5e5238",
   "ssh_username": "ec2-user"
 }
