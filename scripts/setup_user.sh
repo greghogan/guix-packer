@@ -206,6 +206,32 @@ cat <<EOF >> ~/.guile
 EOF
 
 
+# configure maven
+mkdir ~/.m2
+cat <<EOF >> ~/.m2/settings.xml
+<settings>
+    <profiles>
+        <profile>
+            <id>downloadSources</id>
+            <properties>
+                <downloadSources>true</downloadSources>
+                <downloadJavadocs>true</downloadJavadocs>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>downloadSources</activeProfile>
+    </activeProfiles>
+</settings>
+EOF
+
+mkdir ~/.mvn
+cat <<EOF >> ~/.mvn/jvm.config
+--add-opens=java.base/java.lang=ALL-UNNAMED
+EOF
+
+
 # configure screen
 cat <<EOF >> ~/.screenrc
 # See the Screen FAQ,
