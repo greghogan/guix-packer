@@ -99,6 +99,17 @@ function guix_watch_builds() {
 }
 export -f guix_watch_builds
 
+function guix_remove_failures() {
+        if [ $# -gt 0 ]; then
+                for PATTERN in $*; do
+                        guix gc --list-failures | grep $PATTERN | xargs guix gc --clear-failures
+                done
+        else
+                guix gc --list-failures | xargs guix gc --clear-failures
+        fi
+}
+export -f guix_remove_failures
+
 function guix_graph_path() {
 	for (( i=1; i<=$#; i++ )) ; do
 		for (( j=i+1; j<=$#; j++ )) ; do
