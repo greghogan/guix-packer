@@ -70,4 +70,8 @@ cat <<EOF >~/.gitconfig
 [core]
 	editor = vim --clean
 	pager = LESSCHARSET=utf-8 less
+
+[pager]
+	diff = diff-so-fancy | less --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --tabs=4
+	show = diff-so-fancy | less --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --tabs=4
 EOF
