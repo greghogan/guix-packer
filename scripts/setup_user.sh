@@ -99,6 +99,12 @@ function guix_watch_builds() {
 }
 export -f guix_watch_builds
 
+function guix_tail_log_file() {
+	# supress "unexpected end of file" warnings
+	zcat 2>/dev/null -- $(guix build --log-file "$1") | tail -n ${2:-10}
+}
+export -f guix_tail_log_file
+
 function guix_remove_failures() {
         if [ $# -gt 0 ]; then
                 for PATTERN in $*; do
