@@ -12,6 +12,8 @@ EOF
 cat <<EOF > /etc/security/limits.d/00-custom.conf
 * soft nofile 1048576
 * hard nofile 1048576
+@guixbuild soft stack unlimited
+@guixbuild hard stack unlimited
 EOF
 
 # mount attached volumes on startup
