@@ -172,6 +172,11 @@ function guix_rebase_worktree() {
 	done
 }
 export -f guix_rebase_worktree
+
+function guix_weather_all_systems() {
+        guix weather -s aarch64-linux -s armhf-linux -s i586-gnu -s i686-linux -s mips64el-linux -s powerpc-linux -s powerpc64le-linux -s riscv64-linux -s x86_64-linux "$@"
+}
+export -f guix_weather_all_systems
 EOF
 
 
