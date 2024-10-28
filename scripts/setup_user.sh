@@ -204,6 +204,15 @@ cat <<EOF >> ~/.emacs
 EOF
 
 
+# configure gnupg
+mkdir ~/.gnupg
+chmod 700 ~/.gnupg
+cat <<EOF >> ~/.gnupg/gpg.conf
+digest-algo sha512
+EOF
+chmod 600 ~/.gnupg/gpg.conf
+
+
 # configure guile
 cat <<EOF >> ~/.guile
 (use-modules
