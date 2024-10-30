@@ -39,6 +39,9 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+eval `dircolors`
+alias ls='ls --color=auto'
+
 alias tmux='tmux -u'
 
 alias wordiff='git diff --word-diff=color --word-diff-regex=.'
