@@ -42,6 +42,8 @@ alias rm='rm -i'
 eval `dircolors`
 alias ls='ls --color=auto'
 
+alias rg='rg --line-number'
+
 alias tmux='tmux -u'
 
 alias wordiff='git diff --word-diff=color --word-diff-regex=.'
