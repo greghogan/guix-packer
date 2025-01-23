@@ -89,10 +89,7 @@ EOF
 
 ln -s /etc/guix/ /usr/local/etc/guix
 
-# [AL2] prevent cloud-init from changing ssh host keys on new instances
-sed -i 's/^ssh_deletekeys:   true$/ssh_deletekeys:   false/' /etc/cloud/cloud.cfg
-
-# [AL2022] the Guix ssh binary from the openssh package does not have support for
+# the Guix ssh binary from the openssh package does not have support for
 # GSS-API and exits with a configuration error
 if [ -f "/etc/crypto-policies/back-ends/openssh.config" ]; then
   sed -i 's/^GSSAPIKexAlgorithms/#GSSAPIKexAlgorithms/' /etc/crypto-policies/back-ends/openssh.config
@@ -191,7 +188,7 @@ EOF_PATCH
 	tmpfs                                         /tmp        tmpfs  rw,mode=1777,size=100%   0 0
 	EOF
 
-  # [AL2022] root fileystem is mounted read-only unless tmp.mount is unmasked
+  # root fileystem is mounted read-only unless tmp.mount is unmasked
   systemctl unmask tmp.mount
 fi
 
