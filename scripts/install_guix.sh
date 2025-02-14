@@ -43,6 +43,12 @@ export INFOPATH=$INFOPATH${INFOPATH:+:}/usr/share/info
 export MANPATH=$MANPATH${MANPATH:+:}/usr/share/man
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:}/usr/share/pkgconfig
 
+# enable Guix bash completion (see #75803)
+
+unset BASH_COMPLETION_VERSINFO
+[ -f "$HOME/.guix-profile/etc/profile.d/bash_completion.sh" ] && \
+	. "$HOME/.guix-profile/etc/profile.d/bash_completion.sh"
+
 # configure user environment
 
 export HISTCONTROL=ignorespace:ignoredups
