@@ -23,7 +23,7 @@ dnf install -y \
 dnf groupinstall -y "Development Tools"
 
 # install Java JDK
-dnf install -y java-17-amazon-corretto-headless
+dnf install -y java-21-amazon-corretto-headless
 
 # install Intel ICX (cpp) and ICC (cpp-classic) compilers
 if [ "${ARCH}" = "x86_64" ]; then
