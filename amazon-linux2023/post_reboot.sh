@@ -41,7 +41,7 @@ EOF
   yum upgrade -y
 
   if [ "${INSTALL_INTEL_COMPILERS}" = "true" ]; then
-    dnf install -y intel-oneapi-compiler-dpcpp-cpp intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+    dnf install -y intel-cpp-essentials
   fi
 
   # install Packer
