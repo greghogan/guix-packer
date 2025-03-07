@@ -90,10 +90,18 @@ function guix_environment_guix() {
 }
 export -f guix_environment_guix
 
+# usage: guix_build_dependents <package>
+#     or guix_build_dependents <max jobs> <package>
+#     or guix_build_dependents <max jobs> <num builds> <package>
 function guix_build_dependents() {
 	local NUM_BUILDS
 
 	REGEX_NUMBER='^[0-9]+$'
+	MAX_JOBS=1
+	if [[ $1 =~ ${REGEX_NUMBER} ]]; then
+		MAX_JOBS=$1
+		shift
+	fi
 	if [[ $1 =~ ${REGEX_NUMBER} ]]; then
 		NUM_BUILDS=$1
 		shift
@@ -106,7 +114,7 @@ function guix_build_dependents() {
 		DEPENDENTS=$(echo ${DEPENDENTS} | xargs --max-args 1 | shuf | head --lines ${NUM_BUILDS} | xargs)
 	fi
 	echo "Building ${DEPENDENTS}"
-	./pre-inst-env guix build --no-grafts --keep-going --verbosity=1 ${DEPENDENTS}
+	./pre-inst-env guix build --max-jobs=${MAX_JOBS} --no-grafts --keep-going --verbosity=1 ${DEPENDENTS}
 }
 export -f guix_build_dependents
 
