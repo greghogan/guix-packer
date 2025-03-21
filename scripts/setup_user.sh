@@ -124,8 +124,22 @@ function guix_watch_builds() {
 export -f guix_watch_builds
 
 function guix_tail_log_file() {
+	local NUM_LINES LOG_FILE
+
+	REGEX_NUMBER='^[0-9]+$'
+	NUM_LINES=10
+	if [[ $1 =~ ${REGEX_NUMBER} ]]; then
+		NUM_LINES=$1
+		shift
+	fi
+
+	LOG_FILE=$(guix build --log-file "$1")
+
 	# supress "unexpected end of file" warnings
-	zcat 2>/dev/null -- $(guix build --log-file "$1") | tail -n ${2:-10}
+	zcat 2>/dev/null -- $LOG_FILE | tail -n ${2:-$NUM_LINES}
+
+	echo
+	ls -l $LOG_FILE
 }
 export -f guix_tail_log_file
 
