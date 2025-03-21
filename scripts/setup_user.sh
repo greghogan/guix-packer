@@ -50,6 +50,9 @@ alias wordiff='git diff --word-diff=color --word-diff-regex=.'
 
 eval `lesspipe.sh`
 
+# repeat last command until success, sleeping between attempts to allow Ctrl-C
+alias rr='while [ $? -ne 0 ]; do sleep 1; eval $(history -p !!); done'
+
 export GUIX_BUILD_OPTIONS="--cores=1 --keep-going --max-jobs=$(getconf _NPROCESSORS_ONLN) --verbosity=1"
 
 function silence_offload_status() {
