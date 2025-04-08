@@ -16,7 +16,7 @@ sed -i s/^.*ssh-rsa/ssh-rsa/ ~/.ssh/authorized_keys
 mkdir ~/.aws
 cat <<EOF > ~/.aws/config
 [default]
-region=us-east-2
+region=us-east-1
 output=json
 s3 =
   max_concurrent_requests = 10
@@ -92,6 +92,16 @@ function guix_environment_guix() {
 	guix environment --container guix --ad-hoc git help2man less
 }
 export -f guix_environment_guix
+
+function guix_list_dependents() {
+        guix refresh --list-dependent "$@" \
+        | cut --delimiter=: --fields=2 \
+        | tr " " "\n" \
+        | awk NF \
+        | sort \
+        | less --quit-if-one-screen
+}
+export -f guix_list_dependents
 
 # usage: guix_build_dependents <package>
 #     or guix_build_dependents <max jobs> <package>
