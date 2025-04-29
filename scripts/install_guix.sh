@@ -85,4 +85,6 @@ cat <<EOF >~/.gitconfig
 	show = diff-so-fancy | less --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --tabs=4
 EOF
 
-touch ~/.gitignore
+cat <<EOF >~/.gitignore
+**/.nfs*
+EOF
