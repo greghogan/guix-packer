@@ -75,14 +75,34 @@ EOF
 # run vim as the editor without plugins and configure less
 # as the git pager to better support UTF-8
 cat <<EOF >~/.gitconfig
+[commit]
+	verbose = true
+
 [core]
 	editor = vim --clean
 	excludesfile = ~/.gitignore
 	pager = LESSCHARSET=utf-8 less
 
+[diff]
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+
+[help]
+	autocorrect = 1
+
+[http]
+	sslverify = false
+
+[merge]
+	conflictstyle = zdiff3
+
 [pager]
 	diff = diff-so-fancy | less --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --tabs=4
 	show = diff-so-fancy | less --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --tabs=4
+
+[tag]
+	sort = version:refname
 EOF
 
 cat <<EOF >~/.gitignore
