@@ -248,9 +248,16 @@ EOF
 mkdir ~/.gnupg
 chmod 700 ~/.gnupg
 cat <<EOF >> ~/.gnupg/gpg.conf
+
 digest-algo sha512
 EOF
 chmod 600 ~/.gnupg/gpg.conf
+
+cat <<EOF >> ~/.gnupg/gpg-agent.conf
+default-cache-ttl 36000
+max-cache-ttl 36000
+EOF
+chmod 600 ~/.gnupg/gpg-agent.conf
 
 
 # configure guile
