@@ -221,15 +221,44 @@ EOF
 
 
 # configure emacs
-cat <<EOF >> ~/.emacs
+mkdir ~/.emacs.d
+cat <<EOF >> ~/.emacs.d/early-init.el
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+EOF
+
+cat <<EOF >> ~/.emacs.d/init.el
+(tool-bar-mode -1)             ; Hide the outdated icons
+(scroll-bar-mode -1)           ; Hide the always-visible scrollbar
+(setq inhibit-splash-screen t) ; Remove the "Welcome to GNU Emacs" splash screen
+(setq use-file-dialog nil)      ; Ask for textual confirmation instead of GUI
+
 ;; Highlight cursor line
-(global-hl-line-mode +1)
+(global-hl-line-mode 1)
 
 ;; Highlight the pair of delimiters under the cursor
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
-;; Add auto-completion to Geiser
+;; Make everything use UTF-8:
+(use-package emacs
+  :init
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system 'utf-8
+        coding-system-for-read 'utf-8
+        coding-system-for-write 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix)))
+
+;; Emojify
+(require 'emojify)
+(add-hook 'after-init-hook #'global-emojify-mode)
+
+;; Geiser with auto-completion
 (ac-config-default)
 (require 'ac-geiser)
 (add-hook 'geiser-mode-hook 'ac-geiser-setup)
@@ -237,7 +266,14 @@ cat <<EOF >> ~/.emacs
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'geiser-repl-mode))
 
-;; Configure Paredit
+;; Markdown Mode
+(require 'markdown-mode)
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(autoload 'gfm-mode "markdown-mode" "Major mode for editing GitHub Flavored Markdown files" t)
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+
+;; Paredit
 (require 'paredit)
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 (add-hook 'scheme-mode-hook #'enable-paredit-mode)
