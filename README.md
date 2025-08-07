@@ -36,7 +36,7 @@ ARCH=arm64
 # [list of EC2 regions](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html)
 REGION=us-east-2
 
-# for Amazon Linux 2023 (EOL 2028-03-15)
+# for Amazon Linux 2023 (EOL 2029-06-30)
 IMAGE=al2023-ami-kernel-default-${ARCH}
 
 # for Amazon Linux 2 (EOL 2025-06-30)
