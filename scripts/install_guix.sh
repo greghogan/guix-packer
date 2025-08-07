@@ -72,12 +72,24 @@ cat <<EOF >~/.gdbinit
 set debug-file-directory ~/.guix-profile/lib/debug
 EOF
 
-# run vim as the editor without plugins and configure less
-# as the git pager to better support UTF-8
+# git configuration
 cat <<EOF >~/.gitconfig
+[alias]
+	st = status
+
+	l = "!. ~/.githelpers && pretty_git_log"
+	la = "!git l --all"
+	lr = "!git l -30"
+	lra = "!git lr --all"
+	ls = "log --show-signature"
+	merge-pull-request="!m() { for id in $(git cherry HEAD pulls/pr/$1 | cut -c2-); do git cherry-pick --signoff $id; done; }; m"
+
 [commit]
+	gpgsign = true
 	verbose = true
 
+# run vim as the editor without plugins and configure less
+# as the git pager to better support UTF-8
 [core]
 	editor = vim --clean
 	excludesfile = ~/.gitignore
@@ -94,6 +106,9 @@ cat <<EOF >~/.gitconfig
 [http]
 	sslverify = false
 
+[init]
+	defaultBranch = main
+
 [merge]
 	conflictstyle = zdiff3
 
@@ -105,6 +120,7 @@ cat <<EOF >~/.gitconfig
 	sort = version:refname
 EOF
 
+# git file exclusions
 cat <<EOF >~/.gitignore
 .idea/
 cmake-build-*/
