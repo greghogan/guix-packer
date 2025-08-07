@@ -6,6 +6,10 @@ set -eufo pipefail
 
 ARCH=$(uname -m)
 
+# prevent the following error when downloading from Guix mirrors:
+# "GnuTLS: One of the involved algorithms has insufficient security level."
+update-crypto-policies --set LEGACY
+
 # install new packages
 dnf install -y \
   amazon-efs-utils \
