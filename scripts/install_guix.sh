@@ -106,5 +106,7 @@ cat <<EOF >~/.gitconfig
 EOF
 
 cat <<EOF >~/.gitignore
+.idea/
+cmake-build-*/
 **/.nfs*
 EOF
