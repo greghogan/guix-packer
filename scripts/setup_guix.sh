@@ -158,7 +158,7 @@ EOF_PATCH
       fi
 
       if /var/guix/profiles/per-user/root/current-guix/bin/guix pull \
-        --url=http://git.savannah.gnu.org/git/guix.git \
+        --url=https://codeberg.org/guix/guix.git \
         ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}} ; then
           # reset current adjustment and exit loops
           date --set="+${YEAR} years"
