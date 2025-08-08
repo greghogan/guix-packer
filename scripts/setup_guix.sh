@@ -5,6 +5,7 @@
 set -eufo pipefail
 
 ARCH=$(uname -m)
+BUILD_RETRIES=5
 
 CURRENT_GUIX=/var/guix/profiles/per-user/root/current-guix
 function RETRY() { while ! "$@"; do echo "Retrying '$*' in 5 seconds" ; sleep 5; done }
@@ -157,13 +158,18 @@ EOF_PATCH
         date --set="-1 years"
       fi
 
-      if /var/guix/profiles/per-user/root/current-guix/bin/guix pull \
-        --url=https://codeberg.org/guix/guix.git \
-        ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}} ; then
-          # reset current adjustment and exit loops
-          date --set="+${YEAR} years"
-          break 2
-      fi
+      # sometimes packages fail (or only succeed) intermittently so before
+      # cycling the date multiple attempts are made to build the packages
+      for (( TRY=0; TRY<$BUILD_RETRIES; TRY++ )) ; do
+        if /var/guix/profiles/per-user/root/current-guix/bin/guix pull \
+          --url=https://codeberg.org/guix/guix.git \
+          ${GUIX_COMMIT:+--commit=${GUIX_COMMIT}} ; then
+            # reset current adjustment and exit loops
+            date --set="+${YEAR} years"
+            break 2
+        fi
+        echo "Build failed #${TRY} for year ${YEAR} of ${YEARS_BACK}"
+      done
     done
 
     # reset to current date
