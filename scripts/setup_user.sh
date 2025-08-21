@@ -340,6 +340,19 @@ cat <<EOF >> ~/.mvn/jvm.config
 EOF
 
 
+# configure npm
+mkdir ~/.npm-packages
+cat <<EOF >> ~/.npmrc
+prefix=~/.npm-packages
+EOF
+
+cat <<EOF >> ~/.bash_profile
+
+# Make NPM package binaries available
+export PATH="\$PATH:\$HOME/.npm-packages/bin"
+EOF
+
+
 # configure screen
 cat <<EOF >> ~/.screenrc
 # See the Screen FAQ,
