@@ -222,6 +222,9 @@ export -f guix_weather_all_systems
 # requested by the program pinentry. The following enforces use of the terminal
 # as the GUI over ssh fails intermittently.
 export GPG_TTY=$(tty)
+
+# Prevent firefox crash on FileChooser error.
+export XDG_DATA_DIRS=/usr/share:/usr/local/share
 EOF
 
 
