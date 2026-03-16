@@ -65,6 +65,30 @@ if [[ "$PS1" != *"\xF0\x9F\x94\xA5"* ]]; then
 fi
 
 export VISUAL=vi
+
+# source direnv configuration
+eval "$(direnv hook bash)"
+EOF
+
+# direnv conguration
+cat <<"EOF" >~/.config/direnv/direnvcrc
+layout_rust_ebs() {
+  local ebs_base="$HOME/.cache/rust-targets"
+
+  # Include a sanitized CPU model name so that changing instance type
+  # (which changes target-cpu=native) forces a full rebuild in a fresh dir.
+  local cpu_key
+  cpu_key=$(grep -m1 'model name' /proc/cpuinfo \
+    | sed 's/.*: //;s/ @.*//;s/(R)//g;s/(TM)//g' \
+    | tr -s ' ' '_' \
+    | sed 's/__*/_/g;s/^_//;s/_$//')
+
+  # Use the directory name as the unique ID
+  export CARGO_TARGET_DIR="$ebs_base/${PWD##*/}/${cpu_key}"
+
+  # Ensure the directory exists
+  mkdir -p "$CARGO_TARGET_DIR"
+}
 EOF
 
 # configure gdb for any installed Guix debug outputs
