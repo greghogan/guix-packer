@@ -39,6 +39,8 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
+eval `lesspipe.sh`
+
 eval `dircolors`
 alias ls='ls --color=auto'
 
@@ -48,7 +50,29 @@ alias tmux='tmux -u'
 
 alias wordiff='git diff --word-diff=color --word-diff-regex=.'
 
-eval `lesspipe.sh`
+# chrome file dialogs require a running dbus-launch
+alias chrome='google-chrome --use-angle=swiftshader --use-gl=angle --disable-gpu-sandbox --ignore-gpu-blocklist --ozone-platform=x11'
+
+# ensure a single D-Bus session bus is available over SSH
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+    # Path to a temporary file storing the current session address
+    DBUS_ENV_FILE="$HOME/.dbus-session-env"
+
+    # If the environment file exists, load it
+    if [ -f "$DBUS_ENV_FILE" ]; then
+        source "$DBUS_ENV_FILE" > /dev/null
+    fi
+
+    # Check if the loaded address is actually alive; if not, launch a new one
+    if ! dbus-send --address="$DBUS_SESSION_BUS_ADDRESS" --type=method_call \
+        --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1; then
+
+        # Launch new instance and save its variables to the file
+        dbus-launch --sh-syntax > "$DBUS_ENV_FILE"
+        chmod 600 "$DBUS_ENV_FILE"
+        source "$DBUS_ENV_FILE" > /dev/null
+    fi
+fi
 
 # repeat last command until success, sleeping between attempts to allow Ctrl-C
 alias rr='while [ $? -ne 0 ]; do sleep 1; eval $(history -p !!); done'
